@@ -1,0 +1,70 @@
+@font-face {
+  font-family: 'iconfont';  /* project id 1218220 */
+  src: url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.eot');
+  src: url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.eot?#iefix') format('embedded-opentype'),
+  url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.woff2') format('woff2'),
+  url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.woff') format('woff'),
+  url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.ttf') format('truetype'),
+  url('https://at.alicdn.com/t/font_1218220_vx85rrfjag8.svg#iconfont') format('svg');
+}
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.icon-tabbiyan1:before {
+	content: "\e676";
+}
+.icon-tabzhengyan:before {
+	content: "\e675";
+}
+.icon-tabfanhui:before {
+	content: "\e6be";
+}
+.icon-tabgengduo1:before {
+	content: "\e61a";
+}
+.icon-tabDown_arrow:before {
+	content: "\e600";
+}
+.icon-tabduihao:before {
+	content: "\e621";
+}
+.icon-tabshouji2:before {
+	content: "\e693";
+}
+.icon-tabsuo:before {
+	content: "\e644";
+}
+.icon-tabguanbi:before {
+	content: "\e649";
+}
+.icon-tabmima:before {
+	content: "\e783";
+}
+.icon-tabyanzhengma:before {
+	content: "\e603";
+}
+.icon-tabidinput:before {
+	content: "\e781";
+}
+.icon-tabtongzhi:before {
+	content: "\e606";
+}
+.icon-tabicon:before {
+	content: "\e667";
+}
+.icon-tabdizhi:before {
+	content: "\e635";
+}
+.icon-tabbianji:before {
+	content: "\e62e"; /* //编辑 */
+}
+.icon-tabshanchu:before {
+	content: "\e610"; /* 删除 */
+}
+.icon-tabyigouxuan:before {
+	content: "\e62c"; /* 删除 */
+}
