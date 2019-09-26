@@ -1,4 +1,4 @@
-# gls
+# bite
 
 > A Vue.js project
 
