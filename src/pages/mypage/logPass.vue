@@ -8,8 +8,8 @@
          <van-field label="验证码" v-model="verify_code"  clearable maxlength="4" placeholder="请输入验证码" />
          <a @click="sendVerifyCode">{{codeMsg}}</a>
        </div>
-        <van-field label="新密码" type="password" v-model="login_pwd" maxlength="16" @blur="hintPassFun" clearable placeholder="请输入交易密码" />
-        <van-field label="新密码" type="password" v-model="re_login_pwd" maxlength="16"  @blur="hintRepassFun" placeholder="请再次输入交易密码" />
+        <van-field label="新密码" type="password" v-model="login_pwd" maxlength="16" @blur="hintPassFun" clearable placeholder="请输入登录密码" />
+        <van-field label="新密码" type="password" v-model="re_login_pwd" maxlength="16"  @blur="hintRepassFun" placeholder="请再次输入登录密码" />
       </div>
       <!--  <p>
         <span>可用BST:3.56</span>

@@ -3,10 +3,10 @@
     <van-nav-bar title="我的矿机" right-text="矿池" left-arrow @click-left="back" @click-right="goOre" />
     <div class="content">
       <div class="sele_mill">
-          <van-dropdown-menu>
-            <van-dropdown-item v-model="value1" :options="run" @change="seletChange(value1)" />
-            <van-dropdown-item v-model="value2" :options="scrap" @change="seletChangeSc(value2)" />
-          </van-dropdown-menu>
+        <van-dropdown-menu>
+          <van-dropdown-item v-model="value1" :options="run" @change="seletChange(value1)" />
+          <van-dropdown-item v-model="value2" :options="scrap" @change="seletChangeSc(value2)" />
+        </van-dropdown-menu>
       </div>
       <div class="mill_con">
         <div class="mill_info">
@@ -49,23 +49,23 @@
       return {
         value1: 0,
         value2: 0,
-        min_id:0,
+        min_id: 0,
         run: [], //运行中的矿机
         scrap: [], //报废的矿机
-        minInfo:{},
-        my_profit_yesterday:'',
-        my_profit_total:'',
-        power_total:'',
-        power_now:'',
-        my_power:'',
-        my_power_original:'',
-        my_power_add:'',
-        my_profit_list:[],//我的收益列表
-        my_power_list:[],//我的算力列表
-        profit_date:[],
-        profit_val:[],
-        power_date:[],
-        power_val:[],
+        minInfo: {},
+        my_profit_yesterday: '',
+        my_profit_total: '',
+        power_total: '',
+        power_now: '',
+        my_power: '',
+        my_power_original: '',
+        my_power_add: '',
+        my_profit_list: [], //我的收益列表
+        my_power_list: [], //我的算力列表
+        profit_date: [],
+        profit_val: [],
+        power_date: [],
+        power_val: [],
 
       }
     },
@@ -81,14 +81,14 @@
       back() {
         this.$router.back();
       },
-       //选择运行中矿机
+      //选择运行中矿机
       seletChange(i) {
         let that = this;
         // that.exch_info = that.exchange_coin[i];
         that.min_id = that.run[i].id;
         that.getMyMiningInfo();
       },
-        //选择报废矿机
+      //选择报废矿机
       seletChangeSe(i) {
         let that = this;
         that.min_id = that.scrap[i].id;
@@ -97,6 +97,9 @@
       //获取我的矿机列表
       getMyMiningList() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Mining/getMyMiningList",
@@ -107,13 +110,14 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               // that.$vux.loading.hide();
               //运行中的矿机
               that.run = res.data.data.run;
               // 1. 拼接出全部运行中矿机对象
               var cmt = {
-               id:0,
-               value: 0,
-               text:"运行中矿机"
+                id: 0,
+                value: 0,
+                text: "运行中矿机"
               };
               that.run.unshift(cmt);
               that.run = JSON.parse(JSON.stringify(that.run).replace(/mining_name/g, "text"));
@@ -123,11 +127,11 @@
               // console.log(that.run)
               //报废的矿机
               that.scrap = res.data.data.scrap;
-               // 1. 拼接出全部报废矿机对象
+              // 1. 拼接出全部报废矿机对象
               var cmt1 = {
-               id:0,
-               value: 0,
-               text:"已报废矿机"
+                id: 0,
+                value: 0,
+                text: "已报废矿机"
               };
               that.scrap.unshift(cmt1);
               that.scrap = JSON.parse(JSON.stringify(that.scrap).replace(/mining_name/g, "text"));
@@ -146,20 +150,25 @@
 
           });
       },
-       //获取我的矿机详情
+      //获取我的矿机详情
       getMyMiningInfo() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Mining/getMyMiningInfo",
             method: "post",
             data: {
               token: window.localStorage.getItem("token"),
-              id:that.min_id,
+              id: that.min_id,
             }
           })
           .then(function(res) {
             if (res.data.code == 1) {
+
+              that.$vux.loading.hide();
               //矿机详情
               that.minInfo = res.data.data;
               that.my_profit_yesterday = res.data.data.my_profit_yesterday;
@@ -171,7 +180,7 @@
               that.my_power_add = res.data.data.my_power_add;
               that.my_profit_list = res.data.data.my_profit_list;
               var profitDate = [];
-              var profitVal =[];
+              var profitVal = [];
               for (var i = 0; i < that.my_profit_list.length; i++) {
                 profitVal.push(parseInt(that.my_profit_list[i].total_profit)); // 量
                 //times 日期  把返回的日期放到times[]数组中
@@ -182,7 +191,7 @@
               that.drawChart(myChart)
               that.my_power_list = res.data.data.my_power_list;
               var powerDate = [];
-              var powerVal =[];
+              var powerVal = [];
               for (var i = 0; i < that.my_power_list.length; i++) {
                 powerVal.push(parseInt(that.my_power_list[i].total_profit)); // 量
                 //times 日期  把返回的日期放到times[]数组中
@@ -293,95 +302,95 @@
       },
       //我的算力图表
       drawChart2(id) {
-       var myChart2 = echarts.init(document.getElementById('myChart2'));
-       let that = this;
-       // 指定图表的配置项和数据
-       var option = {
-         grid: {
-           left: "20%",
-           top: "20",
-           height: "160",
-           width: "76%"
-         },
-         textStyle: {
-           color: "rgba(255,255,255,.6)"
-         },
-         tooltip: {
-           trigger: 'axis',
-           axisPointer: {
-             type: "line",
-             snap: true,
-           }
-         },
-         xAxis: {
-           type: "category",
-           data: that.power_date,
-           axisLine: {
-             onZero: false,
-             lineStyle: {
-               // show: false,
-               color: "rgba(255,255,255,.6)"
-             }
-           },
-           // axisTick: {//刻度线
-           //   show: false,//去掉刻度线
-           // },
-         },
-         yAxis: {
-           type: "value",
-           name: "",
-           max: 1000,
-           min: 0,
-           nameLocation: "start",
-           nameGap: 10,
-           nameTextStyle: {
-             padding: [-16, 100, 0, 0]
-           },
-           axisLine: {
-             show: false,
-             onZero: false,
-             lineStyle: {
-               color: "rgba(255,255,255,.6)"
-             }
-           },
-           splitLine: {
-             // show: false,
-             lineStyle: {
-               type: "solid",
-               color: "rgba(255,255,255,.3)"
-             }
-           },
-           axisLabel: {
-             formatter: function(value, index) {
-               return value.toFixed(4);
-             }
-           },
-           axisTick: { //刻度线
-             show: false, //去掉刻度线
-           },
-         },
-         dataZoom: [{
-           type: "inside",
-           startValue: that.power_date.length - 7 > 0 ? that.power_date.length - 7 : 0,
-           endValue: that.power_date.length - 1
-         }],
-         series: [{
-           data: that.power_val,
-           type: "bar",
-           barMaxWidth: 30,
-           lineStyle: {
-             color: "#35A8FB"
-           },
-           itemStyle: {
-             color: "#35A8FB"
-           }
-         }]
-       };
+        var myChart2 = echarts.init(document.getElementById('myChart2'));
+        let that = this;
+        // 指定图表的配置项和数据
+        var option = {
+          grid: {
+            left: "20%",
+            top: "20",
+            height: "160",
+            width: "76%"
+          },
+          textStyle: {
+            color: "rgba(255,255,255,.6)"
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: "line",
+              snap: true,
+            }
+          },
+          xAxis: {
+            type: "category",
+            data: that.power_date,
+            axisLine: {
+              onZero: false,
+              lineStyle: {
+                // show: false,
+                color: "rgba(255,255,255,.6)"
+              }
+            },
+            // axisTick: {//刻度线
+            //   show: false,//去掉刻度线
+            // },
+          },
+          yAxis: {
+            type: "value",
+            name: "",
+            max: 1000,
+            min: 0,
+            nameLocation: "start",
+            nameGap: 10,
+            nameTextStyle: {
+              padding: [-16, 100, 0, 0]
+            },
+            axisLine: {
+              show: false,
+              onZero: false,
+              lineStyle: {
+                color: "rgba(255,255,255,.6)"
+              }
+            },
+            splitLine: {
+              // show: false,
+              lineStyle: {
+                type: "solid",
+                color: "rgba(255,255,255,.3)"
+              }
+            },
+            axisLabel: {
+              formatter: function(value, index) {
+                return value.toFixed(4);
+              }
+            },
+            axisTick: { //刻度线
+              show: false, //去掉刻度线
+            },
+          },
+          dataZoom: [{
+            type: "inside",
+            startValue: that.power_date.length - 7 > 0 ? that.power_date.length - 7 : 0,
+            endValue: that.power_date.length - 1
+          }],
+          series: [{
+            data: that.power_val,
+            type: "bar",
+            barMaxWidth: 30,
+            lineStyle: {
+              color: "#35A8FB"
+            },
+            itemStyle: {
+              color: "#35A8FB"
+            }
+          }]
+        };
 
-       // 使用刚指定的配置项和数据显示图表。
-       myChart2.clear(option, true);
-       myChart2.setOption(option, true);
-     },
+        // 使用刚指定的配置项和数据显示图表。
+        myChart2.clear(option, true);
+        myChart2.setOption(option, true);
+      },
       goOre() {
         let that = this;
         that.$router.push({
@@ -398,6 +407,7 @@
     .van-hairline--bottom::after {
       border: none !important;
     }
+
     .content {
       padding: 0;
       overflow-y: scroll;
@@ -414,18 +424,20 @@
           width: 100%;
           height: 0.88rem;
           line-height: 0.88rem;
-          padding:0 6%;
+          padding: 0 6%;
           display: flex;
           justify-content: space-between;
           font-size: 0.28rem;
           color: #fff;
           border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
           span {
             display: block;
             width: 50%;
           }
         }
-        p:nth-child(2){
+
+        p:nth-child(2) {
           border: none;
         }
 

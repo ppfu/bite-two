@@ -13,7 +13,7 @@
             </van-dropdown-menu>
             <div class="pu_pwd">
               <h4>兑换数量：</h4>
-              <van-field v-model="number" placeholder="请输入兑换数量"/>
+              <van-field v-model="number" placeholder="请输入兑换数量" />
               <a @click="allNum">全部</a>
             </div>
             <div class="uses">
@@ -41,7 +41,7 @@
             </div>
             <div class="service">
               <p><img class="imgCode" :src="recharge_address_qrcode" /></p>
-             <!-- <span @click="downs">保存二维码</span> -->
+              <!-- <span @click="downs">保存二维码</span> -->
               <span @click="downloadIamge('.imgCode',recharge_address_qrcode)">保存二维码</span>
             </div>
             <div class="service">
@@ -66,20 +66,20 @@
       return {
         active: this.$route.query.type,
         number: '', //兑换数量
-        exch_number:'',//充值数量
-        address:'',//充值地址
+        exch_number: '', //充值数量
+        address: '', //充值地址
         rech_value: 0, //选中的虚拟币
         recharge_coin: [], //可充值虚拟币
         exch_value: 0, //选中的可兑换虚拟币对
         exchange_coin: [], //可兑换虚拟币对
-        exch_info: {},//兑换币信息
-        use_a: '',//可兑换币数量
+        exch_info: {}, //兑换币信息
+        use_a: '', //可兑换币数量
         recharge_address: '', //充值地址
         recharge_address_qrcode: '', //充值二维码
-        coin_id:'',//充值币id
-        coin_name:'',//充值币名称
-        coin_id_a:'',//兑换币a id
-        coin_id_b:'',//兑换币b id
+        coin_id: '', //充值币id
+        coin_name: '', //充值币名称
+        coin_id_a: '', //兑换币a id
+        coin_id_b: '', //兑换币b id
       }
     },
     components: {
@@ -108,10 +108,10 @@
         that.use_a = use_coin[1];
         that.coin_id_a = that.exchange_coin[i].coin_a;
         that.coin_id_b = that.exchange_coin[i].coin_b;
-         // console.log(that.coin_id_a,that.coin_id_b)
+        // console.log(that.coin_id_a,that.coin_id_b)
       },
       //选择充值币
-      seletChangeRe(i){
+      seletChangeRe(i) {
         let that = this;
         that.coin_id = that.recharge_coin[i].id;
         that.coin_name = that.recharge_coin[i].text;
@@ -141,102 +141,109 @@
           a.dispatchEvent(event)
         }
       },
-// downloadIamge(imgsrc, name) {//下载图片地址和图片名
-//   var image = new Image();
-//   // 解决跨域 Canvas 污染问题
-//   image.setAttribute("crossOrigin", "anonymous");
-//   image.onload = function() {
-//     var canvas = document.createElement("canvas");
-//     canvas.width = image.width;
-//     canvas.height = image.height;
-//     var context = canvas.getContext("2d");
-//     context.drawImage(image, 0, 0, image.width, image.height);
-//     var url = canvas.toDataURL("image/jpg"); //得到图片的base64编码数据
-//
-//     var a = document.createElement("a"); // 生成一个a元素
-//     var event = new MouseEvent("click"); // 创建一个单击事件
-//     a.download = name || "photo"; // 设置图片名称
-//     a.href = url; // 将生成的URL设置为a.href属性
-//     a.dispatchEvent(event); // 触发a的单击事件
-//   };
-//   image.src = imgsrc;
-// },
-// downs(){
-//   this.downloadIamge(this.recharge_address_qrcode, 'pic')
-// },
+      // downloadIamge(imgsrc, name) {//下载图片地址和图片名
+      //   var image = new Image();
+      //   // 解决跨域 Canvas 污染问题
+      //   image.setAttribute("crossOrigin", "anonymous");
+      //   image.onload = function() {
+      //     var canvas = document.createElement("canvas");
+      //     canvas.width = image.width;
+      //     canvas.height = image.height;
+      //     var context = canvas.getContext("2d");
+      //     context.drawImage(image, 0, 0, image.width, image.height);
+      //     var url = canvas.toDataURL("image/jpg"); //得到图片的base64编码数据
+      //
+      //     var a = document.createElement("a"); // 生成一个a元素
+      //     var event = new MouseEvent("click"); // 创建一个单击事件
+      //     a.download = name || "photo"; // 设置图片名称
+      //     a.href = url; // 将生成的URL设置为a.href属性
+      //     a.dispatchEvent(event); // 触发a的单击事件
+      //   };
+      //   image.src = imgsrc;
+      // },
+      // downs(){
+      //   this.downloadIamge(this.recharge_address_qrcode, 'pic')
+      // },
 
-        //兑换
+      //兑换
       exchange() {
-          let that = this;
-          let number = that.number;
-          if (!number || number == null) {
-            that.$toast("请输入兑换数量");
-          } else {
-            that.$toast.loading({
-              mask: true,
-              message:"提交中..."
-            });
-            that.$http({
+        let that = this;
+        let number = that.number;
+        if (!number || number == null) {
+          that.$toast("请输入兑换数量");
+        } else if (Number(number) <= 0) {
+          that.$toast("数量不能小于0！");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
               url: "Account/getUserCoinExchange",
               method: "post",
               data: {
                 token: window.localStorage.getItem("token"),
-                coin_id_a:that.coin_id_a,
-                coin_id_b:that.coin_id_b,
-                number:number,
+                coin_id_a: that.coin_id_a,
+                coin_id_b: that.coin_id_b,
+                number: number,
               }
-              })
-              .then(function(res) {
-                that.$toast.clear();
-                if (res.data.code == 1) {
-                  that.$toast.success("兑换成功");
-                  that.$router.back(-1);
-                } else {
-                  that.$toast.fail(res.data.msg);
-                }
-              })
-              .catch(function(err) {});
-          }
-        },
-           //充值
+            })
+            .then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("兑换成功");
+                that.$router.back(-1);
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
+      //充值
       recharge() {
-          let that = this;
-          let address = that.address;
-          let exch_number = that.exch_number;
-          if (!address || address == null) {
-            that.$toast("请输入充值地址");
-          } else if (!exch_number || exch_number == null) {
-            that.$toast("请输入充值数量");
-          } else {
-            that.$toast.loading({
-              mask: true,
-              message:"提交中..."
-            });
-            that.$http({
+        let that = this;
+        let address = that.address;
+        let exch_number = that.exch_number;
+        if (!address || address == null) {
+          that.$toast("请输入充值地址");
+        } else if (!exch_number || exch_number == null) {
+          that.$toast("请输入充值数量");
+        } else if (Number(exch_number) <= 0) {
+          that.$toast("数量不能小于0！");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
               url: "Account/rechargeUserAccount",
               method: "post",
               data: {
                 token: window.localStorage.getItem("token"),
-                coin_id:that.coin_id,
-                number:exch_number,
-                address:address,
+                coin_id: that.coin_id,
+                number: exch_number,
+                address: address,
               }
-              })
-              .then(function(res) {
-                that.$toast.clear();
-                if (res.data.code == 1) {
-                  that.$toast.success("充值成功，请等待系统确认后到账");
-                  that.$router.back(-1);
-                } else {
-                  that.$toast.fail(res.data.msg);
-                }
-              })
-              .catch(function(err) {});
-          }
-        },
+            })
+            .then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("充值成功，请等待系统确认后到账");
+                that.$router.back(-1);
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
       //获取闪兑相关信息
       getRechargeInfo() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Account/getRechargeInfo",
@@ -247,6 +254,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               //充值
               that.recharge_coin = res.data.data.recharge_coin;
               that.recharge_coin = JSON.parse(JSON.stringify(that.recharge_coin).replace(/coin_name/g, "text"));
@@ -271,7 +279,7 @@
               //默认兑换币id
               that.coin_id_a = that.exchange_coin[0].coin_a;
               that.coin_id_b = that.exchange_coin[0].coin_b;
-              console.log(that.coin_id_a,that.coin_id_b)
+              console.log(that.coin_id_a, that.coin_id_b)
               // //充值二维码
               // that.recharge_address_qrcode = res.data.data.recharge_address_qrcode;
               // //充值地址

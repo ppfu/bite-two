@@ -1,6 +1,9 @@
 <template>
   <div class="public">
-    <van-nav-bar title="转账" left-text="" left-arrow @click-left="back" />
+   <van-nav-bar title="转账" left-arrow @click-left="back">
+     <!--  <span class="iconfont icon-tabicon"></span> -->
+     <van-icon name="notes-o" slot="right" @click="goTran_re" />
+   </van-nav-bar>
     <div class="content">
       <van-tabs v-model="active">
         <van-tab :title="transfer_coin_one.coin_name">
@@ -97,7 +100,9 @@
        let user_id = that.user_id;
        if (!transfer_amount || transfer_amount == null) {
          that.$toast("请输入转账数量");
-       } else if (!user_id || user_id == null) {
+       }else if(Number(transfer_amount) <= 0){
+		       that.$toast("输入的数字不能小于0！");
+		    } else if (!user_id || user_id == null) {
          that.$toast("请输入收款人手机号");
        }else{
          that.tran_dlg = true;
@@ -146,9 +151,13 @@
            });
        }
      },
+
       //获取转账信息
       getTransferInfo() {
         let that = this;
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Account/getTransferInfo",
@@ -159,6 +168,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               that.transfer_user = res.data.data.transfer_user;
               that.transfer_coin_one = res.data.data.transfer_coin[0];
               that.transfer_coin_two = res.data.data.transfer_coin[1];
@@ -171,6 +181,12 @@
 
           });
       },
+	  goTran_re(){
+        let that = this;
+         that.$router.push({
+          path: '/transferRecord'
+        })
+	  },
 
 
 
@@ -180,6 +196,10 @@
 
 <style lang="less" scoped>
   .public {
+	   .van-nav-bar .van-icon {
+	    color: #fff !important;
+	    font-size: 0.4rem !important;
+	  }
     .content {
       width: 100%;
       overflow-y: scroll;

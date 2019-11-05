@@ -60,6 +60,9 @@
       //获取订单详情
       getOrderInfo() {
         let that = this;
+		 that.$vux.loading.show({
+		  text: ""
+		});
         that
           .$http({
             url: "Aoshop/getMyGoodsOrderInfo",
@@ -71,6 +74,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+			  that.$vux.loading.hide();
               that.orderInfo = res.data.data;
               that.orderAddress = res.data.data.order_address;
             } else {

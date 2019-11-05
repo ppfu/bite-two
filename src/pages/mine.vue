@@ -33,13 +33,13 @@
     </div>
     <div class="content">
       <div class="mine_info">
-        <van-cell  @click="gotrAcc" title="转账"  is-link />
-        <van-cell @click="goMoneyCode"  title="我的收钱码" is-link />
-        <van-cell @click="goDeal"  title="我的交易" is-link />
-        <van-cell @click="goEarn"  title="我的收益" is-link />
+        <van-cell @click="gotrAcc" title="转账" is-link />
+        <van-cell @click="goMoneyCode" title="我的收钱码" is-link />
+        <van-cell @click="goDeal" title="我的交易" is-link />
+        <van-cell @click="goEarn" title="我的收益" is-link />
         <van-cell @click="goAddress" title="我的收货地址" is-link />
-        <van-cell @click="goGroup" title="我的团队" is-link  />
-        <van-cell @click="goDrive" title="邀请返佣" is-link  />
+        <van-cell @click="goGroup" title="我的团队" is-link />
+        <van-cell @click="goDrive" title="邀请返佣" is-link />
 
       </div>
 
@@ -55,7 +55,7 @@
     data() {
       return {
         data: {}, //我的页面信息
-        na_type:0,
+        na_type: 0,
       }
     },
     components: {
@@ -64,15 +64,15 @@
     mounted() {
       let that = this;
       that.getUserInfo();
-//       that.$store.state.navigation_type = window.performance.navigation.type;
-//        if (that.$store.state.navigation_type == 1) {
-//         that.na_type = 1;
-//         console.log(that.na_type)
-//       }else{
-//          that.na_type = 0;
-//           console.log(that.na_type)
-//       }
-//
+      //       that.$store.state.navigation_type = window.performance.navigation.type;
+      //        if (that.$store.state.navigation_type == 1) {
+      //         that.na_type = 1;
+      //         console.log(that.na_type)
+      //       }else{
+      //          that.na_type = 0;
+      //           console.log(that.na_type)
+      //       }
+      //
     },
     methods: {
       back() {
@@ -81,6 +81,9 @@
       //获取我的页面信息
       getUserInfo() {
         let that = this;
+        that.$vux.loading.show({
+         text: ""
+       });
         that
           .$http({
             url: "User/getUserInfo",
@@ -90,7 +93,9 @@
             }
           })
           .then(function(res) {
+
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.data = res.data.data;
               that.$store.state.user_data = res.data.data;
               // console.log(that.$store.state.user_data)
@@ -102,16 +107,16 @@
 
           });
       },
-       //设置
-       goSett() {
+      //设置
+      goSett() {
         let that = this;
         that.$router.push({
           path: '/setting'
         })
       },
       //我的订单
-       goOrder(i) {
-         // console.log(i)
+      goOrder(i) {
+        // console.log(i)
         this.$router.push({
           path: '/order',
           query: {
@@ -120,42 +125,42 @@
         })
       },
       //我的交易
-        goDeal() {
+      goDeal() {
         let that = this;
         that.$router.push({
           path: '/dealList'
         })
       },
       //我的收益
-       goEarn() {
+      goEarn() {
         let that = this;
         that.$router.push({
           path: '/earnings'
         })
       },
       //我的团队
-       goGroup() {
+      goGroup() {
         let that = this;
         that.$router.push({
           path: '/group'
         })
       },
-         //收款码
-       goMoneyCode() {
+      //收款码
+      goMoneyCode() {
         let that = this;
         that.$router.push({
           path: '/moneyCode'
         })
       },
 
-       //转账
+      //转账
       gotrAcc() {
         let that = this;
         that.$router.push({
           path: '/transferAcc',
         })
       },
-     //我的地址
+      //我的地址
       goAddress() {
         let that = this;
         that.$router.push({
@@ -163,8 +168,8 @@
         })
       },
       //邀请返佣
-      goDrive(){
-          let that = this;
+      goDrive() {
+        let that = this;
         that.$router.push({
           path: '/directDrive'
         })
@@ -230,6 +235,7 @@
               padding: 0.08rem 0;
               display: flex;
               align-items: center;
+
               span {
                 font-size: 0.26rem;
                 color: rgba(255, 255, 255, 1);
@@ -240,7 +246,8 @@
                 height: 100%;
                 margin: 0 0.06rem;
               }
-               span:nth-child(3) {
+
+              span:nth-child(3) {
                 font-size: 0.26rem;
                 color: rgba(255, 255, 255, 0.6);
               }
@@ -300,10 +307,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+
         img {
           width: 0.46rem;
           height: 0.52rem;
         }
+
         span {
           padding-top: 0.14rem;
           font-size: 0.24rem;
@@ -311,9 +320,10 @@
           color: rgba(167, 167, 167, 1);
         }
       }
-      p:nth-child(4){
-        img{
-           width: 0.6rem;
+
+      p:nth-child(4) {
+        img {
+          width: 0.6rem;
           height: 0.52rem;
         }
       }
@@ -325,24 +335,27 @@
       padding: 0;
       height: calc(100% - 7rem);
       margin-bottom: 1rem;
+
       .mine_info {
         height: 100%;
-       overflow-y: scroll;
+        overflow-y: scroll;
         background: rgba(98, 98, 98, 0.1);
         padding: 0 4%;
-       /deep/ .van-cell {
+
+        /deep/ .van-cell {
           padding: 0.22rem 0 !important;
           font-size: 0.28rem;
           font-weight: 400;
-          background:none !important;
+          background: none !important;
           color: #fff !important;
         }
+
         .van-hairline--top-bottom::after {
           // border-width: 0;
         }
 
-        /deep/  .van-cell:not(:last-child)::after {
-          border-bottom:1px solid #1F244F !important;
+        /deep/ .van-cell:not(:last-child)::after {
+          border-bottom: 1px solid #1F244F !important;
         }
       }
     }

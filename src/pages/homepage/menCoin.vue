@@ -8,14 +8,14 @@
         <van-field label="提币地址" v-model="address" clearable placeholder="请输入或长按粘结地址" />
         <van-field label="提币数量" v-model="amount" clearable placeholder="请输入提币数量" />
       </div>
-        <div class="uses">
+      <div class="uses">
         <p><span>可用{{coinInfo.coin_name}}:</span><span>{{coinInfo.useable_amount}}</span></p>
         <p><span>手续费:</span><span>{{coinInfo.cash_out_fee}}</span></p>
       </div>
       <van-button type="primary" size="large" @click="showMendlg">确认</van-button>
     </div>
     <!-- 密码框-->
-     <x-dialog v-model="men_dlg " class="de_dialog ver_dialog" hide-on-blur>
+    <x-dialog v-model="men_dlg " class="de_dialog ver_dialog" hide-on-blur>
       <div class="dialog">
         <span class="iconfont icon-tabguanbi" @click="closeDia"></span>
         <h3>资金密码</h3>
@@ -37,11 +37,11 @@
     data() {
       return {
         men_dlg: false,
-        pay_pwd:'',//密码
-        coin_id:this.$route.query.coin_id,//提币id
-        address:'',//提现地址
-        amount:'',//提现数量
-        coinInfo:{},//提现信息
+        pay_pwd: '', //密码
+        coin_id: this.$route.query.coin_id, //提币id
+        address: '', //提现地址
+        amount: '', //提现数量
+        coinInfo: {}, //提现信息
       }
     },
     components: {
@@ -59,20 +59,24 @@
         let that = this;
         that.men_dlg = false;
       },
-        //获取提现信息
+      //获取提现信息
       getCashOutInfo() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Wallet/getCashOutInfo",
             method: "post",
             data: {
               token: window.localStorage.getItem("token"),
-              id:that.coin_id
+              id: that.coin_id
             }
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.coinInfo = res.data.data; //
             } else {
               that.$toast(res.data.msg);
@@ -83,7 +87,7 @@
           });
       },
       //密码弹窗
-      showMendlg(){
+      showMendlg() {
         let that = this;
         let address = that.address;
         let amount = that.amount;
@@ -92,60 +96,65 @@
           that.$toast("请输入充值地址");
         } else if (!amount || amount == null) {
           that.$toast("请输入充值数量");
-        }else{
+        } else if (Number(amount) <= 0) {
+          that.$toast("数量不能小于0！");
+        } else {
           that.men_dlg = true;
         }
       },
       //提币
-         cashOut() {
-          let that = this;
-          let pay_pwd = that.pay_pwd;
-          if (!pay_pwd || pay_pwd == null) {
-            that.$toast("请输入交易密码");
-          }else {
-            that.$toast.loading({
-              mask: true,
-              message:"提交中..."
-            });
-            that.$http({
+      cashOut() {
+        let that = this;
+        let pay_pwd = that.pay_pwd;
+        if (!pay_pwd || pay_pwd == null) {
+          that.$toast("请输入交易密码");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
               url: "Wallet/getUserCashOut",
               method: "post",
               data: {
                 token: window.localStorage.getItem("token"),
-                pay_pwd:pay_pwd,
-                coin_id:that.coin_id,
-                amount:that.amount,
-                address:that.address,
+                pay_pwd: pay_pwd,
+                coin_id: that.coin_id,
+                amount: that.amount,
+                address: that.address,
               }
-              })
-              .then(function(res) {
-                that.$toast.clear();
-                if (res.data.code == 1) {
-                  that.$toast.success("提币成功");
-                  that.$router.back(-1);
-                } else {
-                  that.$toast.fail(res.data.msg);
-                }
-              })
-              .catch(function(err) {});
-          }
-        },
+            })
+            .then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("提币成功");
+                that.$router.back(-1);
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
     }
   }
 </script>
 
 <style lang="less" scoped>
   .public {
-    .van-nav-bar__right{
+    .van-nav-bar__right {
       color: #fff !important;
       font-size: 0.4rem !important;
     }
-   .van-nav-bar .van-icon{
-     color: #fff !important;
-     font-size: 0.4rem !important;
-   }
+
+    .van-nav-bar .van-icon {
+      color: #fff !important;
+      font-size: 0.4rem !important;
+    }
+
     .content {
       padding: 0;
+
       .login_info {
         width: 100%;
         background: rgba(98, 98, 98, 0.1);
@@ -179,10 +188,12 @@
 
 
       }
-        .uses {
+
+      .uses {
         display: flex;
         justify-content: space-between;
         padding: 0.08rem 4%;
+
         p {
           font-size: 0.24rem;
           font-family: PingFang SC;
@@ -226,17 +237,20 @@
 
     .ver_dialog {
       position: relative;
+
       span.iconfont {
         position: absolute;
         right: 0;
         top: 0;
         padding: 0.2rem;
       }
+
       h3 {
         padding: 0.2rem 0;
         font-size: 0.32rem;
         color: #2B2B2B;
       }
+
       input {
         width: 4rem;
         height: 0.66rem;
@@ -247,9 +261,11 @@
         margin: 0.8rem 0;
         font-size: 0.26rem;
       }
+
       input::-webkit-input-placeholder {
         color: #BEBEBE !important;
       }
+
       .dia_btn {
         display: flex;
         justify-content: space-between;

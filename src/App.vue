@@ -138,10 +138,12 @@
   }
    .van-toast{
      z-index: 999999 !important;
-     background: #FFF !important;
+    background: #FFF !important;
      color: #1F2241 !important;
    }
-
+  .van-toast .van-loading__spinner{
+      color: #1F2241 !important;
+   }
   .slide-right-enter-active,
   .slide-right-leave-active,
   .slide-left-enter-active,

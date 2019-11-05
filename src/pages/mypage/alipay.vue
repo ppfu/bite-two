@@ -4,12 +4,12 @@
     <div class="content">
       <div class="login_info waiting">
         <van-field label="姓名" v-model="zfb_name" clearable placeholder="请输入姓名" />
-        <van-field label="账号" v-model="zfb_account" maxlength="11" clearable placeholder="请输入账号" />
+        <van-field label="账号" v-model="zfb_account" clearable placeholder="请输入账号" />
         <div class="add_code">
           <h4>添加收款二维码</h4>
           <div class="code_img">
-            <img v-show="imgShow" @click="showUp" :src="zfb_qrcode"  class="wx_img" />
-            <van-uploader v-show="imgShow == false" v-model="fileList" :after-read="afterRead" multiple :max-count="1" />
+            <!-- <img v-show="imgShow" @click="showUp" :src="zfb_qrcode"  class="wx_img" /> -->
+            <van-uploader v-model="fileList" :after-read="afterRead" multiple :max-count="1" />
           </div>
         </div>
       </div>
@@ -29,11 +29,14 @@
   export default {
     data() {
       return {
-        zfb_name:this.$store.state.pay_type.zfb_name,//支付宝姓名
-        zfb_account:this.$store.state.pay_type.zfb_account,//支付宝账号
-        zfb_qrcode:this.$store.state.pay_type.zfb_qrcode,//支付宝收款二维码
-        fileList: [], //展示已上传身份证
-        imgShow: true, //第一次进入
+        zfb_name: this.$store.state.pay_type.zfb_name, //支付宝姓名
+        zfb_account: this.$store.state.pay_type.zfb_account, //支付宝账号
+        zfb_qrcode: this.$store.state.pay_type.zfb_qrcode, //支付宝收款二维码
+        fileList: [{
+          url: this.$store.state.pay_type.zfb_qrcode
+        }], //展示已上传身份证
+        // imgShow: true, //第一次进入
+        base_url: "http://www.btxk.vip", //url域名
       }
     },
     components: {
@@ -41,9 +44,14 @@
     },
     mounted() {
       let that = this;
-      if(that.zfb_qrcode == null){
-        that.imgShow = false;
+      //支付宝图片不为空:去掉获取的支付宝收款码地址域名（防止不重新上传图片点“确认”，域名会再次拼接，导致重复）
+      if (that.zfb_qrcode !== null) {
+        that.zfb_qrcode = that.zfb_qrcode.replace(that.base_url, "")
       }
+      if (that.zfb_qrcode == null) {
+        that.fileList = [];
+      }
+      // console.log(that.zfb_qrcode);
     },
     methods: {
       back() {
@@ -54,44 +62,46 @@
         that.men_dlg = false;
       },
       //编辑支付宝
-           addAlipay() {
-             let that = this;
-             let zfb_name = that.zfb_name;
-             let zfb_account = that.zfb_account;
-             let fileList = that.fileList;
-             if (!zfb_name || zfb_name == null) {
-               that.$toast("请输入姓名");
-             } else if (!zfb_account || zfb_account == null) {
-               that.$toast("请输入支付宝账号");
-             } else if (fileList.length<1) {
-               that.$toast("请上传支付宝收款二维码");
-             } else {
-              that.$toast.loading({
-                mask: true,
-                message: "提交中..."
-              });
-               that.$http({
-                  url: "User/editUserPayType",
-                  method: "post",
-                 data: {
-                   token: window.localStorage.getItem("token"),
-                   zfb_name: zfb_name,
-                   zfb_account: zfb_account,
-                   zfb_qrcode: that.zfb_qrcode,
-                 }
-                 }).then(function(res) {
-                   that.$toast.clear();
-                   if (res.data.code == 1) {
-                    that.$toast.success("成功");
-                     that.back();
-                   } else {
-                     that.$toast.fail(res.data.msg);
-                   }
-                 })
-                 .catch(function(err) {
-                 });
-             }
-           },
+      addAlipay() {
+        let that = this;
+        let zfb_name = that.zfb_name;
+        let zfb_account = that.zfb_account;
+        let zfb_qrcode = that.zfb_qrcode;
+        let fileList = that.fileList;
+        if (!zfb_name || zfb_name == null) {
+          that.$toast("请输入姓名");
+        } else if (!zfb_account || zfb_account == null) {
+          that.$toast("请输入支付宝账号");
+        } else if (!zfb_qrcode || zfb_qrcode == null) {
+          that.$toast("请上传支付宝收款二维码");
+        } else if (fileList.length == 0) {
+          that.$toast("请上传支付宝收款二维码");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
+              url: "User/editUserPayType",
+              method: "post",
+              data: {
+                token: window.localStorage.getItem("token"),
+                zfb_name: zfb_name,
+                zfb_account: zfb_account,
+                zfb_qrcode: that.zfb_qrcode,
+              }
+            }).then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("成功");
+                that.back();
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
       // 上传生产许可证
       afterRead(file) {
         let that = this;
@@ -100,9 +110,10 @@
         reader.onload = function(arg) {
           var formData = new FormData();
           formData.append("file", file.file);
+          // console.log(formData.getAll("file"))
           formData.append("type", "account");
           $.ajax({
-            url: "http://btxk.qilinpz.com/api/Common/upload",
+            url: "http://www.btxk.vip/api/Common/upload",
             type: "POST",
             data: formData,
             dataType: "JSON",
@@ -110,8 +121,9 @@
             processData: false,
             contentType: false
           }).done(function(res) {
-            console.log(res)
+            // console.log(res)
             if (res.code == 1) {
+
               //成功回调
               that.$toast.success("上传成功");
               that.zfb_qrcode = res.data;
@@ -123,10 +135,10 @@
         };
       },
       // 显示上传图片
-     showUp() {
-       this.imgShow = false;
-       this.zfb_qrcode = null;
-     },
+      // showUp() {
+      //   this.imgShow = false;
+      //   this.zfb_qrcode = null;
+      // },
     }
   }
 </script>
@@ -177,34 +189,41 @@
           /* placeholder字体大小  */
         }
       }
+
       .add_code {
         padding: 0 4%;
+
         h4 {
           padding: 0.24rem 0;
           font-size: 0.28rem;
           font-family: PingFang SC;
           color: rgba(255, 255, 255, 1);
         }
-        .code_img{
+
+        .code_img {
           width: 100%;
           text-align: center;
           padding: 0.4rem 0;
-          .wx_img{
+
+          .wx_img {
             display: inline-block;
             width: 3rem;
             height: 3rem;
           }
-        /deep/  .van-uploader__upload{
+
+          /deep/ .van-uploader__upload {
             width: 3rem !important;
             height: 3rem !important;
             background: none !important;
-            border: 1px solid rgba(55,60,105,1) !important;
+            border: 1px solid rgba(55, 60, 105, 1) !important;
           }
-         /deep/ .van-uploader__preview-image{
-             width: 3rem !important;
-             height: 3rem !important;
+
+          /deep/ .van-uploader__preview-image {
+            width: 3rem !important;
+            height: 3rem !important;
           }
-         /deep/ .van-uploader__upload-icon{
+
+          /deep/ .van-uploader__upload-icon {
             font-size: 0.8rem !important;
             font-weight: bold !important;
             color: #B2BCD9 !important;

@@ -30,7 +30,7 @@
       return {
         pageindex: 1, //商品列表默认第一页
         exchangeList: [], //兑现列表
-        goodsTotal: 0, // 总数量
+        exchangeTotal: 0, // 总数量
         updateLoading: false, //下拉刷新
         moreloading: false, // 加载更多
         finished: false // 全部加载
@@ -65,6 +65,9 @@
       //获取兑现记录
       getExchangeList(i) {
         let that = this;
+		that.$vux.loading.show({
+		  text: ""
+		});
         that
           .$http({
             url: "Account/getCoinExchangeList",
@@ -76,6 +79,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               if (i == 0) {
                 if (res.data.data.data.length > 0) {
                   that.exchangeList = res.data.data.data;

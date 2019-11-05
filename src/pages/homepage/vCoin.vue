@@ -9,7 +9,7 @@
            </div>
            <div class="grid_list" @click="goGen">
              <img src="../../assets/img/banka.png" />
-             <span>推广办卡</span>
+             <span>金融街</span>
            </div>
          </div>
     </div>

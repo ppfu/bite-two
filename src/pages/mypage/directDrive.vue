@@ -54,11 +54,7 @@
         //保存二维码
       downloadIamge(selector, name) {
         // 通过选择器获取img元素，
-        if (this.money_code == '') {
 
-          this.$toast("您还不能支付，请联系客服设置");
-
-        } else {
           var img = document.querySelector(selector)
           // 将图片的src属性作为URL地址
           var url = img.src
@@ -67,7 +63,7 @@
           a.download = name || '下载图片名称'
           a.href = url
           a.dispatchEvent(event)
-        }
+
       },
       //  bindQRCode: function () {
       //   new QRCode(this.$refs.qrCodeDiv, {

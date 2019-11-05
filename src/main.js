@@ -61,7 +61,7 @@ axios.defaults.transformRequest = [obj => Qs.stringify(obj)]
 //解决验证码比对不正确 (跨域)
 axios.defaults.withCredentials = true //
 //指定baseurl
-const BASE_URL = 'http://btxk.jinjifuweng.com/api/';
+const BASE_URL = 'http://www.btxk.vip/api/';
 axios.defaults.baseURL=BASE_URL;
 
 Vue.prototype.$http = axios

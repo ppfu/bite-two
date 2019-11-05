@@ -219,6 +219,9 @@
        //获取首页信息
       getHomeInfo() {
         let that = this;
+		  that.$vux.loading.show({
+		  text: ""
+		});
         that
           .$http({
             url: "Index/index",
@@ -229,6 +232,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+			         // that.$vux.loading.hide();
               that.banner = res.data.data.banner; //轮播图
               that.coin  =res.data.data.coin; //
             } else {
@@ -242,6 +246,9 @@
         //获取消息列表信息（默认第一页）
       getUserNoticeList() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Index/getUserNoticeList",
@@ -253,6 +260,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               // that.$vux.loading.hide();
               that.notice = res.data.data.data; //消息列表
               // console.log(that.notice)
             } else {
@@ -266,6 +274,9 @@
         //虚拟币价格趋势
       getCoinInfo() {
         let that = this;
+        that.$vux.loading.show({
+         text: ""
+       });
         that
           .$http({
             url: "Coin/getCoinInfo",
@@ -276,7 +287,9 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+                that.$vux.loading.hide();
               that.coinInfo  = res.data.data;
+              // that.$toast.clear();
               // console.log(that.coinInfo)
             } else {
               that.$toast(res.data.msg);

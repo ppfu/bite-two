@@ -146,7 +146,9 @@
          let number = that.number;
         if (!number || number == null) {
           that.$toast("请输入转账数量");
-        } else{
+        }else if(Number(number) <= 0){
+		       that.$toast("数量不能小于0！");
+		    }else{
           that.tran_dlg = true;
         }
       },
@@ -202,6 +204,9 @@
       //获取转账信息
       getTransferInfo() {
         let that = this;
+          that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Account/getTransferInfo",
@@ -212,8 +217,8 @@
             }
           })
           .then(function(res) {
-            // console.log(res)
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               that.transfer_user = res.data.data.transfer_user;
                // console.log(transfer_user)
               that.transfer_bsc = res.data.data.transfer_coin[0];

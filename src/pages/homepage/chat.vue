@@ -18,7 +18,7 @@
   export default {
     data() {
       return {
-        service:[],//客服列表
+        service: [], //客服列表
       }
     },
     components: {
@@ -32,9 +32,12 @@
       back() {
         this.$router.back();
       },
-        //获取客服列表
+      //获取客服列表
       getServiceList() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Index/getCustomerServiceList",
@@ -45,6 +48,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.service = res.data.data; //客服列表
             } else {
               that.$toast(res.data.msg);
@@ -70,26 +74,30 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-   .service{
-     margin-top: 1rem;
-     width: 100%;
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     p{
-       background: #fff;
-       img{
-         width:3rem;
-         height: 3rem;
-       }
-     }
-     span{
-       padding: 0.2rem 0;
-       color: #fff;
-       font-size: 0.28rem;
-     }
 
-   }
+      .service {
+        margin-top: 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        p {
+          background: #fff;
+
+          img {
+            width: 3rem;
+            height: 3rem;
+          }
+        }
+
+        span {
+          padding: 0.2rem 0;
+          color: #fff;
+          font-size: 0.28rem;
+        }
+
+      }
     }
   }
 </style>

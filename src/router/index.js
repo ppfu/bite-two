@@ -42,6 +42,7 @@ import Strategy from '@/pages/mypage/strategy' //攻略
 import Group from '@/pages/mypage/group' //团队
 import DirectDrive from '@/pages/mypage/directDrive' //直推
 import TransferAcc from '@/pages/mypage/transferAcc' //转账
+import TransferRecord from '@/pages/mypage/transferRecord' //转账
 import MoneyCode from '@/pages/mypage/moneyCode' //收款码
 import MyAddress from '@/pages/mypage/myAddress' //我的收货地址
 import AddAdderss from '@/pages/mypage/addAdderss' //增加地址
@@ -116,6 +117,32 @@ export default new Router({
       }
     },
     {
+      path: '/Transfer',
+      name: 'Transfer',
+      components: {
+        main: Transfer,
+        footer: BotNav,
+      },
+      meta: {
+        index: 3,
+        none: "true",
+        // keepAlive:true,
+      }
+    },
+    {
+      path: '/store',
+      name: 'store',
+      components: {
+        main: Store,
+        footer: BotNav,
+      },
+      meta: {
+        index: 4,
+        // none: "true",
+        // keepAlive:true,
+      }
+    },
+    {
       path: '/deal',
       name: 'deal',
       components: {
@@ -123,12 +150,24 @@ export default new Router({
         footer: BotNav,
       },
       meta: {
-        index: 2,
+        index: 5,
         // none: "true",
         // keepAlive:true,
       }
     },
-
+    {
+      path: '/mine',
+      name: 'mine',
+      components: {
+        main: Mine,
+        footer: BotNav,
+      },
+      meta: {
+        index: 6,
+        none: "true",
+        // keepAlive:true
+      }
+    },
     {
       path: '/chat',
       name: 'chat',
@@ -136,7 +175,7 @@ export default new Router({
         main: Chat,
       },
       meta: {
-        index: 6,
+        index: 10,
         keepAlive: true,
       }
     },
@@ -151,9 +190,6 @@ export default new Router({
         // keepAlive:true,
       }
     },
-
-
-
     {
       path: '/menCoin',
       name: 'menCoin',
@@ -165,45 +201,7 @@ export default new Router({
         // keepAlive:true,
       }
     },
-    {
-      path: '/store',
-      name: 'store',
-      components: {
-        main: Store,
-        footer: BotNav,
-      },
-      meta: {
-        index: 2,
-        // none: "true",
-        // keepAlive:true,
-      }
-    },
-    {
-      path: '/Transfer',
-      name: 'Transfer',
-      components: {
-        main: Transfer,
-        footer: BotNav,
-      },
-      meta: {
-        index: 2,
-        none: "true",
-        // keepAlive:true,
-      }
-    },
-    {
-      path: '/mine',
-      name: 'mine',
-      components: {
-        main: Mine,
-        footer: BotNav,
-      },
-      meta: {
-        index: 2,
-        none: "true",
-        // keepAlive:true
-      }
-    },
+
     {
       path: '/myMill',
       name: 'myMill',
@@ -343,7 +341,7 @@ export default new Router({
         main: ComDetail,
       },
       meta: {
-        index: 3,
+        index: 5,
         keepAlive: true
       }
     },
@@ -354,7 +352,7 @@ export default new Router({
         main: OrderDetail,
       },
       meta: {
-        index: 4,
+        index: 6,
         // keepAlive: true
       }
     },
@@ -365,7 +363,7 @@ export default new Router({
         main: Setting,
       },
       meta: {
-        index: 3,
+        index: 7,
         keepAlive: true
       }
     },
@@ -376,7 +374,7 @@ export default new Router({
         main: AccountAuth,
       },
       meta: {
-        index: 4,
+        index: 8,
         // keepAlive:true
       }
     },
@@ -387,7 +385,7 @@ export default new Router({
         main: CashWay,
       },
       meta: {
-        index: 6,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -398,7 +396,7 @@ export default new Router({
         main: WeChat,
       },
       meta: {
-        index: 7,
+        index: 9,
         // keepAlive:true,
       }
     },
@@ -409,7 +407,7 @@ export default new Router({
         main: Alipay,
       },
       meta: {
-        index: 7,
+        index: 9,
         // keepAlive:true,
       }
     },
@@ -420,7 +418,7 @@ export default new Router({
         main: BankCard,
       },
       meta: {
-        index: 7,
+        index: 9,
         // keepAlive:true,
       }
     },
@@ -431,7 +429,7 @@ export default new Router({
         main: MoneyPass,
       },
       meta: {
-        index: 5,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -442,7 +440,7 @@ export default new Router({
         main: LogPass,
       },
       meta: {
-        index: 5,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -453,7 +451,7 @@ export default new Router({
         main: Order,
       },
       meta: {
-        index: 4,
+        index: 7,
         // keepAlive:true,
       }
     },
@@ -464,7 +462,7 @@ export default new Router({
         main: OrderInfo,
       },
       meta: {
-        index: 5,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -475,7 +473,7 @@ export default new Router({
         main: DealList,
       },
       meta: {
-        index: 4,
+        index: 7,
         // keepAlive:true,
       }
     },
@@ -486,7 +484,7 @@ export default new Router({
         main: Earnings,
       },
       meta: {
-        index: 4,
+        index: 7,
         // keepAlive:true,
       }
     },
@@ -497,7 +495,7 @@ export default new Router({
         main: Strategy,
       },
       meta: {
-        index: 5,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -508,7 +506,7 @@ export default new Router({
         main: Group,
       },
       meta: {
-        index: 4,
+        index: 7,
         // keepAlive:true,
       }
     },
@@ -519,7 +517,7 @@ export default new Router({
         main: DirectDrive,
       },
       meta: {
-        index: 5,
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -530,7 +528,18 @@ export default new Router({
         main: TransferAcc,
       },
       meta: {
-        index: 4,
+        index: 7,
+        // keepAlive:true,
+      }
+    },
+    {
+      path: '/transferRecord',
+      name: 'transferRecord',
+      components: {
+        main: TransferRecord,
+      },
+      meta: {
+        index: 8,
         // keepAlive:true,
       }
     },
@@ -541,21 +550,21 @@ export default new Router({
         main: MoneyCode,
       },
       meta: {
-        index: 4,
+        index: 7,
         // keepAlive:true,
       }
     },
     {
-     path: '/myAddress',
-     name: 'myAddress',
-     components: {
-       main: MyAddress,
-     },
-     meta: {
-       index: 5,
-       // keepAlive:true,
-     }
-   },
+      path: '/myAddress',
+      name: 'myAddress',
+      components: {
+        main: MyAddress,
+      },
+      meta: {
+        index: 7,
+        // keepAlive:true,
+      }
+    },
     {
       path: '/addAdderss',
       name: 'addAdderss',
@@ -563,32 +572,32 @@ export default new Router({
         main: AddAdderss,
       },
       meta: {
-        index: 6,
+        index: 8,
         // keepAlive:true,
       }
     },
-     {
+    {
       path: '/editAddress',
       name: 'editAddress',
       components: {
         main: EditAddress,
       },
       meta: {
-        index: 6,
+        index: 8,
         // keepAlive:true,
       }
     },
- {
-   path: '/payment',
-   name: 'payment',
-   components: {
-     main: Payment,
-   },
-   meta: {
-     index: 5,
-     // none: "true",
-     // keepAlive:true,
-   }
- },
+    {
+      path: '/payment',
+      name: 'payment',
+      components: {
+        main: Payment,
+      },
+      meta: {
+        index: 9,
+        // none: "true",
+        // keepAlive:true,
+      }
+    },
   ],
 });

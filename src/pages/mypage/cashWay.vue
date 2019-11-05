@@ -45,10 +45,10 @@
   export default {
     data() {
       return {
-        payTypeInfo:{},
+        payTypeInfo: {},
       }
     },
-     mounted() {
+    mounted() {
       let that = this;
       that.getUserPayType()
     },
@@ -56,9 +56,12 @@
       back() {
         this.$router.back();
       },
-       //获取我的地址列表信息
-     getUserPayType() {
+      //获取我的地址列表信息
+      getUserPayType() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "User/getUserPayType",
@@ -69,6 +72,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.payTypeInfo = res.data.data;
               that.$store.state.pay_type = res.data.data;
 
@@ -110,12 +114,13 @@
 
     .content {
       padding: 0;
+
       .account {
         margin-top: 0.4rem;
 
         .acc_list {
           padding: 0.32rem 4%;
-          background:rgba(98,98,98,0.1);
+          background: rgba(98, 98, 98, 0.1);
           border-radius: 0.08rem;
           margin-bottom: 0.2rem;
           display: flex;
@@ -167,6 +172,7 @@
                 color: #A7A7A7;
               }
             }
+
             span {
               font-size: 0.28rem;
               font-family: PingFang SC;

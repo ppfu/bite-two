@@ -35,6 +35,9 @@
          //获取客服列表
       getRecommendCardImg() {
         let that = this;
+		 that.$vux.loading.show({
+		  text: ""
+		});
         that
           .$http({
             url: "Index/getRecommendCardImg",
@@ -46,6 +49,7 @@
           .then(function(res) {
 
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.cardimg = res.data.data;
               console.log(that.cardimg)
             } else {

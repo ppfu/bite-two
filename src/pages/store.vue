@@ -52,7 +52,7 @@
                   </div>
                 </div>
               </van-tab>
-              <van-tab title="电器">
+              <van-tab :title="classitem.class_name" v-for="(classitem,index) in classList" :key="index">
                 <div class="ao_con">
                   <div class="store_list">
                     <div class="scroll_div">
@@ -76,7 +76,7 @@
                   </div>
                 </div>
               </van-tab>
-              <van-tab title="数码">
+          <!--    <van-tab title="数码">
                 <div class="ao_con">
                   <div class="store_list">
                     <div class="scroll_div">
@@ -147,7 +147,7 @@
                     </div>
                   </div>
                 </div>
-              </van-tab>
+              </van-tab> -->
             </van-tabs>
           </div>
         </van-tab>
@@ -173,6 +173,7 @@
         bannerList: [], //ao商城首页banner图
         pageindex: 1, //商品列表默认第一页
         goodsList: [], //商品列表
+        classList:[],//商品分类列表
         goodsTotal: 0, // 总数量
         updateLoading: false, //下拉刷新
         moreloading: false, // 加载更多
@@ -187,6 +188,7 @@
       that.getShopBanner();
       that.getShopGoodsList();
       that.getMiningList();
+	    that.getGoodsClassList();
     },
     methods: {
       back() {
@@ -195,18 +197,18 @@
       //转换数据格式
       checkPrice(price) {
         if (price) {
-          price = parseFloat(price);
+          price = Math.round(price);
           if (price < 1000) {
-            price = parseFloat(price).toFixed(4);
+            price = Math.round(price);
           }
           if (price >= 1000 && price < 10000) {
-            price = parseFloat(price / 1000).toFixed(4) + "k";
+            price = Math.round(price / 1000) + "k";
           }
           if (price >= 10000 && price < 1000000) {
-            price = parseFloat(price / 10000).toFixed(4) + "w";
+            price = Math.round(price / 10000) + "w";
           }
           if (price >= 1000000) {
-            price = parseFloat(price / 1000000).toFixed(4) + "m";
+            price = Math.round(price / 1000000) + "m";
           }
         }
         return price;
@@ -214,6 +216,9 @@
       //获取矿机商城列表
       getMiningList() {
         let that = this;
+        that.$vux.loading.show({
+         text: ""
+       });
         that
           .$http({
             url: "Mining/getMiningList",
@@ -223,7 +228,9 @@
             }
           })
           .then(function(res) {
+
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               that.MiningList = res.data.data.mining;
               that.MinAccount = res.data.data.account;
               that.consume_bsc = that.MinAccount.consume_bsc;
@@ -263,6 +270,35 @@
           });
 
       },
+	   //获取商品分类列表
+	  getGoodsClassList() {
+	    let that = this;
+	    that.$vux.loading.show({
+	      text: ""
+	    });
+	    that
+	      .$http({
+	        url: "Aoshop/getGoodsClassList",
+	        method: "post",
+	        data: {
+	          token: window.localStorage.getItem("token"),
+	        }
+	      })
+	      .then(function(res) {
+	        if (res.data.code == 1) {
+	          that.$vux.loading.hide();
+	          that.classList = res.data.data;
+	          console.log(that.classList)
+	          // that.MinAccount = res.data.data.account;
+	        } else {
+	          that.$vux.loading.hide();
+	          that.$toast(res.data.msg);
+	        }
+	      })
+	      .catch(function(error) {
+	          that.$vux.loading.hide();
+	      });
+	  },
       //获取Ao商城首页轮播图
       getShopBanner() {
         let that = this;
@@ -317,9 +353,12 @@
       //获取Ao商城商品列表
       getShopGoodsList(t) {
         let that = this;
-        let type = (that.active_ao).toString();
+        // let type = (that.active_ao).toString();
         // type == 0 : 全部; type == 1 : 电器;type == 2 : 数码; type == 3 : 服饰;type == 4 : 其他;
-        let goods_type = type == "0" ? "0" : type == "1" ? "1" : type == "2" ? "2" : type == "3" ? "3" : "4";
+        let goods_type = (that.active_ao).toString();
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Aoshop/getShopGoodsList",
@@ -332,16 +371,17 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               if (t == 0) {
                 if (res.data.data.data.length > 0) {
                   that.goodsList = res.data.data.data;
-                  $.each(that.goodsList, function(index, item) {
-                    //usdt
-                    item.goods_price_usdt = that.checkPrice(item.goods_price_usdt);
-                    //bsc
-                    item.goods_price_bsc = that.checkPrice(item.goods_price_bsc);
-                    // console.log(item.goods_price_bsc)
-                  });
+                  // $.each(that.goodsList, function(index, item) {
+                  //   //usdt
+                  //   item.goods_price_usdt = that.checkPrice(item.goods_price_usdt);
+                  //   //bsc
+                  //   item.goods_price_bsc = that.checkPrice(item.goods_price_bsc);
+                  //   // console.log(item.goods_price_bsc)
+                  // });
                   that.goodsTotal = res.data.data.total;
                   if (that.goodsList.length >= that.goodsTotal) {
                     //全部数据已加载
@@ -356,8 +396,8 @@
                 if (res.data.data.data.length > 0) {
                   that.goodsList = that.goodsList.concat(res.data.data.data);
                   $.each(that.goodsList, function(index, item) {
-                     item.goods_price_usdt = that.checkPrice(item.goods_price_usdt);
-                     item.goods_price_bsc = that.checkPrice(item.goods_price_bsc);
+                     item.goods_price_usdt = Math.round(item.goods_price_usdt);
+                     item.goods_price_bsc = Math.round(item.goods_price_bsc);
                   });
                   that.goodsTotal = res.data.data.total;
                 } else {

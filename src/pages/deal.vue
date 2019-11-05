@@ -398,9 +398,13 @@
         let price = that.price;
         if (!number || number == null) {
           that.$toast("请输入购买数量");
-        } else if (!price || price == null) {
+        }else if(Number(number) <= 0){
+		       that.$toast("数量不能小于0！");
+		    } else if (!price || price == null) {
           that.$toast("请输入购买单价");
-        } else {
+        }else if(Number(price) <= 0){
+		       that.$toast("单价不能小于0！");
+		    } else {
           that.tran_dlg = true;
         }
       },
@@ -479,6 +483,9 @@
         let that = this;
         let Ctype = (that.coinType).toString();
         var coinId = Ctype == "0" ? "1" : "2"; //1:BSC 2:BST
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Trade/getUserTradeList",
@@ -490,6 +497,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+
               that.coin = res.data.data.coin;
               that.coin_one = that.coin[0],
               that.coin_two = that.coin[1],
@@ -529,7 +537,9 @@
         let det_type = detType == "0" ? "1" : "2";
         let detCoin = (that.coinType).toString();
         let det_coin = detCoin == "0" ? "1" : "2";
-
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Trade/getTradeDetailList",
@@ -545,6 +555,7 @@
           .then(function(res) {
             // console.log(res.data.data.total)
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               if (t == 0) {
                 if (res.data.data.data.length > 0) {
                   that.detailList = res.data.data.data;
@@ -650,7 +661,13 @@
         let that = this;
         if(!that.deal_amount || that.deal_amount == null){
            that.$toast("请输入交易价格或数量");
-        }else{
+        }else if(Number(that.deal_amount) <= 0){
+		       that.$toast("输入的数字不能小于0！");
+		    }else if(that.activeBuy == 0 &&  Number(that.deal_amount) > Number(that.buy_info.total_price)){
+		       that.$toast("输入的数字不能超过最大价格！");
+		    }else if(that.activeBuy == 1 &&  Number(that.deal_amount) > Number(that.buy_info.number)){
+		       that.$toast("输入的数字不能超过最大数量！");
+		    }else{
           that.order_dlg = true;
         }
       },

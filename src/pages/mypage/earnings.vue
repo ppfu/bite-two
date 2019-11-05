@@ -44,20 +44,20 @@
             </div>
           </div>
           <div class="account">
-             <div class="scroll_div">
-             <van-pull-refresh v-model="updateLoading" pulling-text="下拉刷新" loosing-text="释放更新" loading-text="正在加载..."
-              @refresh="onRefresh">
-              <van-list v-model="moreloading" :finished="finished" :immediate-check="true" finished-text="————— 已经没有更多了 —————"
-                @load="onLoad">
-            <div class="acc_list" v-for="(item,index) in teamList" :key="index">
-              <div class="acc_top">
-                <p><span>{{item.relation_user}}</span><span>{{item.create_time}}</span></p>
-                <p class="acc_rig"><span>{{item.coin_amount}}BSC</span><span>{{item.team_type}}</span></p>
-              </div>
+            <div class="scroll_div">
+              <van-pull-refresh v-model="updateLoading" pulling-text="下拉刷新" loosing-text="释放更新" loading-text="正在加载..."
+                @refresh="onRefresh">
+                <van-list v-model="moreloading" :finished="finished" :immediate-check="true" finished-text="————— 已经没有更多了 —————"
+                  @load="onLoad">
+                  <div class="acc_list" v-for="(item,index) in teamList" :key="index">
+                    <div class="acc_top">
+                      <p><span>{{item.relation_user}}</span><span>{{item.create_time}}</span></p>
+                      <p class="acc_rig"><span>{{item.coin_amount}}BSC</span><span>{{item.team_type}}</span></p>
+                    </div>
+                  </div>
+                </van-list>
+              </van-pull-refresh>
             </div>
-             </van-list>
-               </van-pull-refresh>
-             </div>
           </div>
         </van-tab>
       </van-tabs>
@@ -80,7 +80,7 @@
         team: "", //其他收益
         pageindex: 1, //矿机列表默认第一页
         miningList: [], //矿机收益列表
-        teamList:[],//其他收益列表
+        teamList: [], //其他收益列表
         miningTotal: 0, // 总数量
         teamTotal: 0, // 总数量
         updateLoading: false, //下拉刷新
@@ -114,6 +114,9 @@
       //获取我的收益
       getMyProfitInfo() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Account/getMyProfitInfo",
@@ -124,6 +127,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.profitInfo = res.data.data.profit_intro;
               that.$store.state.profitInfo = that.profitInfo;
               that.mining = res.data.data.mining;
@@ -136,127 +140,127 @@
 
           });
       },
-    //下拉刷新
-   onRefresh() {
-     let that = this;
-     that.updateLoading = true;
-     that.moreloading = false;
-     that.finished = false;
-     that.pageindex = 1;
-     that.miningList = [];
-     that.teamList = [];
-     that.miningTotal = 0;
-     that.teamTotal = 0;
-     that.getMyMiningProfit(0);
-     that.getMyTeamProfit(0);
+      //下拉刷新
+      onRefresh() {
+        let that = this;
+        that.updateLoading = true;
+        that.moreloading = false;
+        that.finished = false;
+        that.pageindex = 1;
+        that.miningList = [];
+        that.teamList = [];
+        that.miningTotal = 0;
+        that.teamTotal = 0;
+        that.getMyMiningProfit(0);
+        that.getMyTeamProfit(0);
 
-   },
-   //上拉加载更多
-   onLoad() {
-     let that = this;
-     that.pageindex += 1;
-     that.moreloading = true;
-     that.getMyMiningProfit(1);
-     that.getMyTeamProfit(1);
-   },
-   //获取我的矿机收益列表
-   getMyMiningProfit(i) {
-     let that = this;
-     that
-       .$http({
-         url: "Account/getMyMiningProfit",
-         method: "post",
-         data: {
-           token: window.localStorage.getItem("token"),
-           page: that.pageindex,
-         },
+      },
+      //上拉加载更多
+      onLoad() {
+        let that = this;
+        that.pageindex += 1;
+        that.moreloading = true;
+        that.getMyMiningProfit(1);
+        that.getMyTeamProfit(1);
+      },
+      //获取我的矿机收益列表
+      getMyMiningProfit(i) {
+        let that = this;
+        that
+          .$http({
+            url: "Account/getMyMiningProfit",
+            method: "post",
+            data: {
+              token: window.localStorage.getItem("token"),
+              page: that.pageindex,
+            },
 
-       })
-       .then(function(res) {
-         if (res.data.code == 1) {
-           if (i == 0) {
-             if (res.data.data.data.length > 0) {
-               that.miningList = res.data.data.data;
-               that.miningTotal = res.data.data.total;
-               if (that.miningList.length >= that.miningTotal) {
-                 //全部数据已加载
-                 that.finished = true;
-               }
-             } else {
-               that.finished = true;
-             }
-             that.updateLoading = false;
-           } else {
-             that.moreloading = false;
-             if (res.data.data.data.length > 0) {
-               that.miningList = that.miningList.concat(res.data.data.data);
+          })
+          .then(function(res) {
+            if (res.data.code == 1) {
+              if (i == 0) {
+                if (res.data.data.data.length > 0) {
+                  that.miningList = res.data.data.data;
+                  that.miningTotal = res.data.data.total;
+                  if (that.miningList.length >= that.miningTotal) {
+                    //全部数据已加载
+                    that.finished = true;
+                  }
+                } else {
+                  that.finished = true;
+                }
+                that.updateLoading = false;
+              } else {
+                that.moreloading = false;
+                if (res.data.data.data.length > 0) {
+                  that.miningList = that.miningList.concat(res.data.data.data);
 
-               that.miningTotal = res.data.data.total;
-             } else {
-               that.finished = true;
-             }
-             if (that.miningList.length >= that.miningTotal) {
-               //全部数据已加载
-               that.finished = true;
-             }
-           }
-         } else {
-           that.$toast(res.data.msg);
-         }
-       })
-       .catch(function(error) {
+                  that.miningTotal = res.data.data.total;
+                } else {
+                  that.finished = true;
+                }
+                if (that.miningList.length >= that.miningTotal) {
+                  //全部数据已加载
+                  that.finished = true;
+                }
+              }
+            } else {
+              that.$toast(res.data.msg);
+            }
+          })
+          .catch(function(error) {
 
-       });
-   },
-    //获取其他收益列表
-   getMyTeamProfit(i) {
-     let that = this;
-     that
-       .$http({
-         url: "Account/getMyTeamProfit",
-         method: "post",
-         data: {
-           token: window.localStorage.getItem("token"),
-           page: that.pageindex,
-         },
+          });
+      },
+      //获取其他收益列表
+      getMyTeamProfit(i) {
+        let that = this;
+        that
+          .$http({
+            url: "Account/getMyTeamProfit",
+            method: "post",
+            data: {
+              token: window.localStorage.getItem("token"),
+              page: that.pageindex,
+            },
 
-       })
-       .then(function(res) {
-         if (res.data.code == 1) {
-           if (i == 0) {
-             if (res.data.data.data.length > 0) {
-               that.teamList = res.data.data.data;
-               that.teamTotal = res.data.data.total;
-               if (that.teamList.length >= that.teamTotal) {
-                 //全部数据已加载
-                 that.finished = true;
-               }
-             } else {
-               that.finished = true;
-             }
-             that.updateLoading = false;
-           } else {
-             that.moreloading = false;
-             if (res.data.data.data.length > 0) {
-               that.teamList = that.teamList.concat(res.data.data.data);
+          })
+          .then(function(res) {
+            if (res.data.code == 1) {
+              if (i == 0) {
+                if (res.data.data.data.length > 0) {
+                  that.teamList = res.data.data.data;
+                  that.teamTotal = res.data.data.total;
+                  if (that.teamList.length >= that.teamTotal) {
+                    //全部数据已加载
+                    that.finished = true;
+                  }
+                } else {
+                  that.finished = true;
+                }
+                that.updateLoading = false;
+              } else {
+                that.moreloading = false;
+                if (res.data.data.data.length > 0) {
+                  that.teamList = that.teamList.concat(res.data.data.data);
 
-               that.teamTotal = res.data.data.total;
-             } else {
-               that.finished = true;
-             }
-             if (that.teamList.length >= that.teamTotal) {
-               //全部数据已加载
-               that.finished = true;
-             }
-           }
-         } else {
-           that.$toast(res.data.msg);
-         }
-       })
-       .catch(function(error) {
+                  that.teamTotal = res.data.data.total;
+                } else {
+                  that.finished = true;
+                }
+                if (that.teamList.length >= that.teamTotal) {
+                  //全部数据已加载
+                  that.finished = true;
+                }
+              }
+            } else {
+              that.$toast(res.data.msg);
+            }
+          })
+          .catch(function(error) {
 
-       });
-   },
+          });
+      },
 
 
 

@@ -12,7 +12,7 @@
          <!-- 实名通过或资料已提交还未审核 -->
          <van-field v-if="$store.state.user_data.rz_status == 1 || $store.state.user_data.rz_status == 2" label="身份证号" v-model="idcard_number" maxlength="18" clearable disabled />
       </div>
-      <h5 v-if="$store.state.user_data.rz_status == 1" style="color: #35A8FB;">您已提价实名认证，请等待审核</h5>
+      <h5 v-if="$store.state.user_data.rz_status == 1" style="color: #35A8FB;">您已提交实名认证申请，请等待审核</h5>
       <h5 v-if="$store.state.user_data.rz_status == 2" style="color: #35A8FB;">恭喜您的实名认证已通过</h5>
       <h5 v-if="$store.state.user_data.rz_status == 3" style="color: #D14B64;">抱歉您的实名认证未通过！请重新提交资料</h5>
       <van-button v-if="$store.state.user_data.rz_status == 0 || $store.state.user_data.rz_status == 3" type="primary" @click="accountAuth" size="large">确认</van-button>
@@ -86,7 +86,6 @@
       .login_info {
         width: 100%;
         background: rgba(98, 98, 98, 0.1);
-
         /deep/ .van-cell {
           width: 94% !important;
           margin: 0 auto !important;

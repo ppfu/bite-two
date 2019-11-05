@@ -9,11 +9,11 @@
               <p class="deal_tit"><span>{{item.consignee_name}}</span><span>{{item.consignee_phone}}</span></p>
               <h4>{{item.address_detail}}</h4>
             </div>
-            <span class="iconfont icon-tabbianji"  @click="goEditaddress(item)"></span>
+            <span class="iconfont icon-tabbianji" @click="goEditaddress(item)"></span>
           </div>
           <div class="acc_top">
             <p v-if="item.is_default == 0" @click="setDefault(item.id)"><span class="iconfont icon-tabyigouxuan"></span><a>设置为默认地址</a></p>
-            <p v-if="item.is_default == 1" style="color:#DDB71E;"><span class="iconfont icon-tabyigouxuan" ></span><a>默认地址</a></p>
+            <p v-if="item.is_default == 1" style="color:#DDB71E;"><span class="iconfont icon-tabyigouxuan"></span><a>默认地址</a></p>
             <span class="iconfont icon-tabshanchu" @click="delAddress(item.id)"></span>
           </div>
         </div>
@@ -31,8 +31,8 @@
   export default {
     data() {
       return {
-        default_add: '1',//默认地址
-        checked: '',//非默认地址
+        default_add: '1', //默认地址
+        checked: '', //非默认地址
         addressList: [], //我的页面信息
       }
     },
@@ -47,20 +47,20 @@
       back() {
         this.$router.back();
       },
-       //前往结算
+      //前往结算
       gotoClose(index) {
         window.sessionStorage.setItem("addressIndex", index);
         this.back();
       },
       //添加地址
-       goAddaddress() {
+      goAddaddress() {
         let that = this;
         that.$router.push({
           path: '/addAdderss'
         })
       },
       //编辑地址
-        goEditaddress(item) {
+      goEditaddress(item) {
         let that = this;
         // console.log(item)
         that.$store.state.edit_address = item;
@@ -74,6 +74,9 @@
       //获取我的地址列表信息
       getMyAddress() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "User/getUserAddressList",
@@ -84,8 +87,9 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.addressList = res.data.data;
-                window.sessionStorage.setItem(
+              window.sessionStorage.setItem(
                 "address",
                 JSON.stringify(that.addressList)
               );
@@ -98,43 +102,43 @@
           });
       },
       //设置默认地址
-      setDefault(id){
+      setDefault(id) {
         let that = this;
-          that.$http
-            .post("User/setUserAddressDefault", {
-              token: window.localStorage.getItem("token"),
-              id:id,
-            })
-            .then(function(res) {
-              that.$toast.clear();
-              if (res.data.code == 1) {
-                that.getMyAddress()
-                that.$toast.success("设置成功");
-              } else {
-                that.$toast.fail(res.data.msg);
-              }
-            })
-            .catch(function(err) {});
+        that.$http
+          .post("User/setUserAddressDefault", {
+            token: window.localStorage.getItem("token"),
+            id: id,
+          })
+          .then(function(res) {
+            that.$toast.clear();
+            if (res.data.code == 1) {
+              that.getMyAddress()
+              that.$toast.success("设置成功");
+            } else {
+              that.$toast.fail(res.data.msg);
+            }
+          })
+          .catch(function(err) {});
 
       },
-       //删除地址
-      delAddress(id){
+      //删除地址
+      delAddress(id) {
         let that = this;
-          that.$http
-            .post("User/delUserAddress", {
-              token: window.localStorage.getItem("token"),
-              id:id,
-            })
-            .then(function(res) {
-              that.$toast.clear();
-              if (res.data.code == 1) {
-                that.getMyAddress()
-                that.$toast.success("删除成功");
-              } else {
-                that.$toast.fail(res.data.msg);
-              }
-            })
-            .catch(function(err) {});
+        that.$http
+          .post("User/delUserAddress", {
+            token: window.localStorage.getItem("token"),
+            id: id,
+          })
+          .then(function(res) {
+            that.$toast.clear();
+            if (res.data.code == 1) {
+              that.getMyAddress()
+              that.$toast.success("删除成功");
+            } else {
+              that.$toast.fail(res.data.msg);
+            }
+          })
+          .catch(function(err) {});
       }
     }
   }
@@ -167,13 +171,16 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #1F244F;
+
             .info_left {
               flex: 1;
+
               .deal_tit {
                 width: 100%;
                 height: 0.8rem;
                 align-items: center;
                 display: flex;
+
                 // justify-content: space-between;
                 span:nth-child(1) {
                   font-size: 0.28rem;
@@ -211,28 +218,32 @@
             align-items: center;
             font-family: PingFang SC;
             padding: 0.32rem 0;
-            p{
+
+            p {
               display: flex;
               align-items: center;
               color: #ABABAB;
-              span.icon-tabyigouxuan{
+
+              span.icon-tabyigouxuan {
                 font-size: 0.38rem;
               }
-              a{
+
+              a {
                 padding-left: 0.2rem;
                 font-size: 0.24rem;
               }
             }
 
-             span.icon-tabshanchu{
-               font-size: 0.32rem;
-               color:#ABABAB;
-             }
+            span.icon-tabshanchu {
+              font-size: 0.32rem;
+              color: #ABABAB;
+            }
 
           }
 
         }
-           .van-button--large {
+
+        .van-button--large {
           margin: 1rem 4% !important;
         }
 

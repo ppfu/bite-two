@@ -18,13 +18,14 @@
                 <van-button v-if="item.trade_status == 1" type="primary" size="small" color="#35A8FB" @click="cancelEntry(item.id)">取消</van-button>
               </div>
             </div>
+           <!-- <div no></div> -->
           </div>
         </van-tab>
         <van-tab title="订单交易中">
           <div class="account">
-            <div class="acc_list" v-for="(item,index) in orderList" :key="index" >
+            <div class="acc_list" v-for="(item,index) in orderList" :key="index">
               <p class="deal_tit" @click="goDetailOrder(item.id)">
-               <span>{{item.trade_type}} {{item.coin_name}}</span>
+                <span>{{item.trade_type}} {{item.coin_name}}</span>
                 <span>{{item.create_time}}</span>
               </p>
               <div class="acc_top">
@@ -32,8 +33,9 @@
                 <p><span>{{item.number}}</span><span>数量</span></p>
                 <p><span style="color:#D14B64 ;">{{item.trade_status_msg}}</span><span>状态</span></p>
                 <!-- <van-button v-if="item.trade_type == '卖出' && item.trade_status == 1" type="primary" size="small" color="#35A8FB">未付款</van-button> -->
-                <van-button v-if="item.trade_type == '卖出' && item.trade_status == 2" type="primary" size="small" color="#35A8FB" @click="affirmGat(item.id)">确认收款</van-button>
-   <!--             <van-button v-if="item.trade_type == '买入' && item.trade_status == 1" type="primary" size="small" color="#35A8FB">未付款</van-button>
+                <van-button v-if="item.trade_type == '卖出' && item.trade_status == 2" type="primary" size="small" color="#35A8FB"
+                  @click="affirmGat(item.id)">确认收款</van-button>
+                <!--             <van-button v-if="item.trade_type == '买入' && item.trade_status == 1" type="primary" size="small" color="#35A8FB">未付款</van-button>
                 <van-button v-if="item.trade_type == '买入' && item.trade_status == 2" type="primary" size="small" color="#35A8FB">已付款</van-button> -->
               </div>
             </div>
@@ -41,9 +43,9 @@
         </van-tab>
         <van-tab title="订单已完成">
           <div class="account">
-            <div class="acc_list" v-for="(item,index) in orderList" :key="index" >
+            <div class="acc_list" v-for="(item,index) in orderList" :key="index">
               <p class="deal_tit" @click="goDetailOrder(item.id)">
-               <span>{{item.trade_type}} {{item.coin_name}}</span>
+                <span>{{item.trade_type}} {{item.coin_name}}</span>
                 <span>{{item.create_time}}</span>
               </p>
               <div class="acc_top">
@@ -54,11 +56,11 @@
             </div>
           </div>
         </van-tab>
-          <van-tab title="订单已取消">
+        <van-tab title="订单已取消">
           <div class="account">
             <div class="acc_list" v-for="(item,index) in orderList" :key="index" @click="goDetailOrder(item.id)">
               <p class="deal_tit">
-               <span>{{item.trade_type}} {{item.coin_name}}</span>
+                <span>{{item.trade_type}} {{item.coin_name}}</span>
                 <span>{{item.create_time}}</span>
               </p>
               <div class="acc_top">
@@ -70,7 +72,12 @@
           </div>
         </van-tab>
       </van-tabs>
+       <div v-if="orderList.length <=0" class="no_data">
+        <img src="../../assets/img/noData.png">
+        <span>暂无数据</span>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -119,6 +126,9 @@
         let that = this;
         var l_type = (that.active).toString()
         var lType = l_type == "0" ? "1" : l_type == "1" ? "2" : l_type == "2" ? "3" : "4";
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Trade/getMyTradeOrderList",
@@ -130,6 +140,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.orderList = res.data.data.data;
 
             } else {
@@ -137,57 +148,57 @@
             }
           })
           .catch(function(error) {
-
+             // that.$toast(error);
           });
       },
       //取消挂单
-      cancelEntry(id){
+      cancelEntry(id) {
         let that = this;
-           that
-            .$http({
-              url: "Trade/setCoinTradeCancel",
-              method: "post",
-              data: {
-                token: window.localStorage.getItem("token"),
-                id: id,
-              }
-            })
-            .then(function(res) {
-              if (res.data.code == 1) {
-                that.$toast.success("取消成功");
-                that.getMyTradeOrderList();
-              } else {
-                that.$toast.fail(res.data.msg);
-              }
-            })
-            .catch(function(error) {
+        that
+          .$http({
+            url: "Trade/setCoinTradeCancel",
+            method: "post",
+            data: {
+              token: window.localStorage.getItem("token"),
+              id: id,
+            }
+          })
+          .then(function(res) {
+            if (res.data.code == 1) {
+              that.$toast.success("取消成功");
+              that.getMyTradeOrderList();
+            } else {
+              that.$toast.fail(res.data.msg);
+            }
+          })
+          .catch(function(error) {
 
-            });
+          });
 
       },
       //确认收款
-      affirmGat(id){
+      affirmGat(id) {
         let that = this;
-           that
-            .$http({
-              url: "Trade/setCoinOrderDone",
-              method: "post",
-              data: {
-                token: window.localStorage.getItem("token"),
-                id: id,
-              }
-            })
-            .then(function(res) {
-              if (res.data.code == 1) {
-                that.$toast.success("已确认");
-                that.getMyTradeOrderList();
-              } else {
-                that.$toast.fail(res.data.msg);
-              }
-            })
-            .catch(function(error) {
+        that
+          .$http({
+            url: "Trade/setCoinOrderDone",
+            method: "post",
+            data: {
+              token: window.localStorage.getItem("token"),
+              id: id,
+            }
+          })
+          .then(function(res) {
+            if (res.data.code == 1) {
+              that.$toast.success("已确认");
+              that.getMyTradeOrderList();
+            } else {
+              that.$toast.fail(res.data.msg);
+            }
+          })
+          .catch(function(error) {
 
-            });
+          });
 
       }
 
@@ -265,6 +276,20 @@
               border-radius: 2rem !important;
             }
           }
+        }
+      }
+      .no_data{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img{
+          width: 3.2rem;
+          height: 3.2rem;
+          }
+        span{
+          color: #B1B9DC;
+          padding: 0.12rem 0;
+          font-size: 0.28rem;
         }
       }
     }

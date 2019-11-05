@@ -23,6 +23,10 @@
             </div>
 
           </div>
+          <div v-if="directList.length <=0" class="no_data">
+            <img src="../../assets/img/noData.png">
+            <span>暂无数据</span>
+          </div>
         </van-tab>
         <van-tab :title="'团队人数'+ '（'+team_num+'）'">
           <div class="account">
@@ -44,8 +48,15 @@
             </div>
 
           </div>
+          <div v-if="teamList.length <=0" class="no_data">
+            <img src="../../assets/img/noData.png">
+            <span>暂无数据</span>
+          </div>
         </van-tab>
       </van-tabs>
+
+
+
     </div>
   </div>
 </template>
@@ -86,9 +97,8 @@
       //获取我的团队信息
       getGroup() {
         let that = this;
-        that.$toast.loading({
-          mask: true,
-          message: "加载中..."
+        that.$vux.loading.show({
+          text: ""
         });
         that
           .$http({
@@ -99,53 +109,51 @@
             }
           })
           .then(function(res) {
-              that.$toast.clear();
-              if (res.data.code == 1) {
-                that.directList = res.data.data.direct;
-                $.each(that.directList, function(index, item) {
-                    item.create_time = that.timesToTime(item.create_time);
-                  })
-                that.teamList = res.data.data.team;
-                $.each(that.teamList, function(index, item) {
-                    item.create_time = that.timesToTime(item.create_time);
-                  })
-                that.direct_num = res.data.data.direct_num;
-                that.team_num = res.data.data.team_num;
-                  // console.log(that.teamList)
-                }
-                else {
-                  that.$toast(res.data.msg);
-                }
+            that.$vux.loading.hide();
+            if (res.data.code == 1) {
+              that.directList = res.data.data.direct;
+              $.each(that.directList, function(index, item) {
+                item.create_time = that.timesToTime(item.create_time);
               })
-            .catch(function(error) {
-            });
-          },
-          // 时间戳 转化为时间
-          timesToTime(timestamp) {
-            var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-            var Y = date.getFullYear() + "-";
-            var M = (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "-";
-            var D = date.getDate() + " ";
-            if (date.getHours() < 10) {
-              var h = "0" + date.getHours() + ":";
+              that.teamList = res.data.data.team;
+              $.each(that.teamList, function(index, item) {
+                item.create_time = that.timesToTime(item.create_time);
+              })
+              that.direct_num = res.data.data.direct_num;
+              that.team_num = res.data.data.team_num;
+              // console.log(that.teamList)
             } else {
-              var h = date.getHours() + ":";
+              that.$toast(res.data.msg);
             }
-            if (date.getMinutes() < 10) {
-              var m = "0" + date.getMinutes() + ":";
-            } else {
-              var m = date.getMinutes() + ":";
-            }
-            var s = date.getSeconds();
-            if (s == 0) {
-              s = "00";
-            } else if (s < 10) {
-              s = "0" + s;
-            }
-            return Y + M + D + h + m + s;
-          },
-      }
+          })
+          .catch(function(error) {});
+      },
+      // 时间戳 转化为时间
+      timesToTime(timestamp) {
+        var date = new Date(timestamp * 1000); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + "-";
+        var M = (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "-";
+        var D = date.getDate() + " ";
+        if (date.getHours() < 10) {
+          var h = "0" + date.getHours() + ":";
+        } else {
+          var h = date.getHours() + ":";
+        }
+        if (date.getMinutes() < 10) {
+          var m = "0" + date.getMinutes() + ":";
+        } else {
+          var m = date.getMinutes() + ":";
+        }
+        var s = date.getSeconds();
+        if (s == 0) {
+          s = "00";
+        } else if (s < 10) {
+          s = "0" + s;
+        }
+        return Y + M + D + h + m + s;
+      },
     }
+  }
 </script>
 
 <style lang="less" scoped>
@@ -225,6 +233,20 @@
               }
             }
           }
+        }
+      }
+        .no_data{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img{
+          width: 3.2rem;
+          height: 3.2rem;
+          }
+        span{
+          color: #B1B9DC;
+          padding: 0.12rem 0;
+          font-size: 0.28rem;
         }
       }
     }

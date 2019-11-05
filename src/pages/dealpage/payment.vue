@@ -14,12 +14,15 @@
             <p>￥<span>{{coinOrderInfo.total_price}}</span></p>
           </div>
         </div>
-        <div v-if="coinOrderInfo.trade_type == 1 && coinOrderInfo.order_status !== 4 " class="statis">
+        <div v-if="coinOrderInfo.trade_type == 1 && coinOrderInfo.order_status == 1 " class="statis">
           {{rest_time}} 后自动取消订单
         </div>
-        <div v-if="coinOrderInfo.trade_type == 2 && coinOrderInfo.order_status !== 4 " class="statis">
+        <div v-if="coinOrderInfo.trade_type == 2 && coinOrderInfo.order_status == 1 " class="statis">
           请在 {{rest_time}} 内完成付款
         </div>
+        <!-- <div v-if="coinOrderInfo.trade_type == 2 && coinOrderInfo.order_status == 2 " class="statis">
+
+        </div> -->
       </div>
 
     </div>
@@ -52,8 +55,8 @@
           </p>
         </div>
         <div class="pay_met" v-if="pay_name == '微信'">
-          <van-cell title="收款人" :value="pay_method.zfb_name" />
-          <van-cell title="微信账号" :value="pay_method.zfb_account" />
+          <van-cell title="收款人" :value="pay_method.wx_name" />
+          <van-cell title="微信账号" :value="pay_method.wx_account" />
           <van-cell title="联系方式" :value="coinOrderInfo.contact_phone" />
           <p class="pay_code">
             <span>微信付款码</span>
@@ -136,6 +139,9 @@
       //获取交易详情信息
       getCoinOrderInfo() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Trade/getCoinOrderInfo",
@@ -147,6 +153,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.coinOrderInfo = res.data.data;
               var restTime = parseInt(that.coinOrderInfo.rest_time);
               // that.rest_time = that.coinOrderInfo.rest_time;

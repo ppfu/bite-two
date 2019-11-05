@@ -19,6 +19,10 @@
               </div>
             </div>
           </div>
+           <div v-if="accountList.length <=0" class="no_data">
+            <img src="../../assets/img/noData.png">
+            <span>暂无数据</span>
+          </div>
         </van-tab>
         <van-tab title="余额宝">
           <div class="wall_con">
@@ -33,23 +37,24 @@
               </div>
             </div>
 
-             <div class="no_data" v-if="user_yeb == ''">
-                 <van-icon name="warning-o" />
-                 <span>暂无余额</span>
-             </div>
+            <div class="no_data" v-if="user_yeb == ''">
+              <van-icon name="warning-o" />
+              <span>暂无余额</span>
+            </div>
 
           </div>
-            <div class="well_btn" @click="seleCoin">
+          <div class="well_btn" @click="seleCoin">
             <span>转入</span>
           </div>
         </van-tab>
       </van-tabs>
     </div>
-     <!-- 选择币种弹窗 -->
+    <!-- 选择币种弹窗 -->
     <x-dialog v-model="coin_dlg" class="de_dialog lang_dialog" hide-on-blur>
       <div class="dialog">
         <ul>
-          <li :class="{active:categoryIndex==index}" @click="changeLang(item,index)" v-for="(item,index) in coin_list" :key="index">
+          <li :class="{active:categoryIndex==index}" @click="changeLang(item,index)" v-for="(item,index) in coin_list"
+            :key="index">
             <span>{{item.coin_name}}</span>
             <span class="iconfont icon-tabduihao"></span>
           </li>
@@ -93,18 +98,18 @@
       return {
         active: 0,
         categoryIndex: 0, //点击当前背景变成白色索引
-        deIndex:-1,//选定
+        deIndex: -1, //选定
         add_dlg: false,
-        coin_dlg:false,
-        accountList: [],//转账列表
-        coin_list:[],//可转入余额宝的币种
-        yeb:[],//余额宝类型
-        user_yeb:[],//用户已转入的余额宝
-        yeb_coin:{},//转入余额宝币种
-        yeb_intro:'',//余额宝介绍
-        yeb_id:'',//余额宝种类id
-        coin_id:'',//币id
-        amount:'',//转入数量
+        coin_dlg: false,
+        accountList: [], //转账列表
+        coin_list: [], //可转入余额宝的币种
+        yeb: [], //余额宝类型
+        user_yeb: [], //用户已转入的余额宝
+        yeb_coin: {}, //转入余额宝币种
+        yeb_intro: '', //余额宝介绍
+        yeb_id: '', //余额宝种类id
+        coin_id: '', //币id
+        amount: '', //转入数量
       }
     },
     components: {
@@ -119,42 +124,42 @@
       back() {
         this.$router.back();
       },
-      closeAddlog(){
-         let that = this;
-         that.add_dlg = false;
+      closeAddlog() {
+        let that = this;
+        that.add_dlg = false;
       },
       //提币
-       goMen(id) {
+      goMen(id) {
         let that = this;
         that.$router.push({
           path: '/menCoin',
-          query:{
-            coin_id:id
+          query: {
+            coin_id: id
           }
         })
       },
       //兑换
-      goConver(i){
-         let that = this;
+      goConver(i) {
+        let that = this;
         that.$router.push({
           path: '/flashAgainst',
-          query:{
-            type:i
+          query: {
+            type: i
           }
         })
       },
       //充值
-       goRech(i) {
+      goRech(i) {
         let that = this;
         that.$router.push({
           path: '/flashAgainst',
-          query:{
-            type:i
+          query: {
+            type: i
           }
         })
       },
       //关于余额宝
-       goBala() {
+      goBala() {
         let that = this;
         that.$router.push({
           path: '/aboutBala'
@@ -164,7 +169,7 @@
         this.coin_dlg = true;
       },
       //选择币种
-      changeLang(item,i){
+      changeLang(item, i) {
         let that = this;
         that.categoryIndex = i;
         that.coin_dlg = false;
@@ -173,68 +178,73 @@
         that.coin_id = item.id;
       },
       //选定周期
-      designate(item,i){
+      designate(item, i) {
         let that = this;
         that.deIndex = i;
         that.yeb_id = item.id;
       },
-        //转入余额宝
+      //转入余额宝
       addUserYebe() {
-          let that = this;
-          let amount = that.amount;
-          if (!amount || amount == null) {
-            that.$toast("请输入转入金额");
-          } else {
-            that.$toast.loading({
-              mask: true,
-              message:"提交中..."
-            });
-            that.$http({
+        let that = this;
+        let amount = that.amount;
+        if (!amount || amount == null) {
+          that.$toast("请输入转入数量");
+        } else if (Number(amount) <= 0) {
+          that.$toast("数量不能小于0！");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
               url: "Wallet/addUserYeb",
               method: "post",
               data: {
                 token: window.localStorage.getItem("token"),
-                coin_id:that.coin_id,
-                yeb_id:that.yeb_id,
-                amount:amount,
+                coin_id: that.coin_id,
+                yeb_id: that.yeb_id,
+                amount: amount,
               }
-              })
-              .then(function(res) {
-                that.$toast.clear();
-                if (res.data.code == 1) {
-                  that.$toast.success("转入成功");
-                  that.add_dlg = false;
-                  that.getUserYebInfo();
-                  that.getAccountList();
-                } else {
-                  that.$toast.fail(res.data.msg);
-                }
-              })
-              .catch(function(err) {});
+            })
+            .then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("转入成功");
+                that.add_dlg = false;
+                that.getUserYebInfo();
+                that.getAccountList();
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
+      //转换数据格式
+      checkPrice(price) {
+        if (price) {
+          price = parseFloat(price);
+          if (price < 1000) {
+            price = parseFloat(price).toFixed(2);
           }
-        },
-         //转换数据格式
-        checkPrice(price) {
-          if (price) {
-            price = parseFloat(price);
-            if (price < 1000) {
-              price = parseFloat(price).toFixed(4);
-            }
-            if (price >= 1000 && price < 10000) {
-              price = parseFloat(price / 1000).toFixed(4) + "k";
-            }
-            if (price >= 10000 && price < 1000000) {
-              price = parseFloat(price / 10000).toFixed(4) + "w";
-            }
-            if (price >= 1000000) {
-              price = parseFloat(price / 1000000).toFixed(4) + "m";
-            }
+          if (price >= 1000 && price < 10000) {
+            price = parseFloat(price / 1000).toFixed(2) + "k";
           }
-          return price;
-        },
-      //获取转账列表
+          if (price >= 10000 && price < 1000000) {
+            price = parseFloat(price / 10000).toFixed(2) + "w";
+          }
+          if (price >= 1000000) {
+            price = parseFloat(price / 1000000).toFixed(2) + "m";
+          }
+        }
+        return price;
+      },
+      //获取账户列表
       getAccountList() {
         let that = this;
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Wallet/getUserAccountList",
@@ -245,14 +255,15 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               that.accountList = res.data.data;
-                $.each(that.accountList, function(index, item) {
-                  //可用数量
-                  item.amount = that.checkPrice(item.amount);
-                 //冻结数量
-                  item.frozen_amount = that.checkPrice(item.frozen_amount);
-                 //折合人民币
-                  item.amount_cny = that.checkPrice(item.amount_cny);
+              $.each(that.accountList, function(index, item) {
+                //可用数量
+                item.amount = that.checkPrice(item.amount);
+                //冻结数量
+                item.frozen_amount = that.checkPrice(item.frozen_amount);
+                //折合人民币
+                item.amount_cny = that.checkPrice(item.amount_cny);
 
               });
             } else {
@@ -264,9 +275,12 @@
 
           });
       },
-       //获取余额宝信息
+      //获取余额宝信息
       getUserYebInfo() {
         let that = this;
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Wallet/getUserYebInfo",
@@ -277,24 +291,25 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               that.coin_list = res.data.data.coin_list;
-                $.each(that.coin_list, function(index, item) {
-                     //可转入余额宝币种数量
-                  item.amount = that.checkPrice(item.amount);
+              $.each(that.coin_list, function(index, item) {
+                //可转入余额宝币种数量
+                item.amount = that.checkPrice(item.amount);
               });
               that.yeb = res.data.data.yeb;
               that.user_yeb = res.data.data.user_yeb;
-               $.each(that.user_yeb, function(index, item) {
-                     //总投资额
-                  item.total_amount = that.checkPrice(item.total_amount);
-                     //累计收益
-                  item.profit_amount = that.checkPrice(item.profit_amount);
-                     //今日收益
-                  item.profit_amount_today = that.checkPrice(item.profit_amount_today);
+              $.each(that.user_yeb, function(index, item) {
+                //总投资额
+                item.total_amount = that.checkPrice(item.total_amount);
+                //累计收益
+                item.profit_amount = that.checkPrice(item.profit_amount);
+                //今日收益
+                item.profit_amount_today = that.checkPrice(item.profit_amount_today);
 
               });
               that.yeb_intro = res.data.data.yeb_intro;
-              that.$store.state.yeb_intro = that.yeb_intro ;
+              that.$store.state.yeb_intro = that.yeb_intro;
             } else {
               that.$toast(res.data.msg);
             }
@@ -320,10 +335,12 @@
       height: calc(100% - 1.8rem);
       overflow-y: scroll;
       padding: 0;
-        /deep/ .van-tabs__nav {
-         background: rgba(255, 255, 255, 0.028) !important;
-         z-index: 99;
-       }
+
+      /deep/ .van-tabs__nav {
+        background: rgba(255, 255, 255, 0.028) !important;
+        z-index: 99;
+      }
+
       /deep/ .van-tab {
         color: #fff !important;
       }
@@ -343,10 +360,12 @@
           background: rgba(255, 255, 255, 0.06);
           border-radius: 0.08rem;
           margin-bottom: 0.2rem;
+
           .acc_top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             h3 {
               display: inline-block;
               width: 1rem;
@@ -355,6 +374,7 @@
               background-size: 100%;
               text-align: center;
               line-height: 0.92rem;
+
               a {
                 font-size: 0.26rem;
                 font-family: PingFang SC;
@@ -412,9 +432,11 @@
           }
         }
       }
+
       .wall_con {
         margin-top: 0.2rem;
         padding: 0 4%;
+
         h4 {
           text-align: right;
           font-size: 0.24rem;
@@ -422,20 +444,23 @@
           color: rgba(53, 168, 251, 1);
           padding: 0.2rem 0;
         }
-        .no_data{
+
+        .no_data {
           width: 100%;
           height: 2rem;
-          color:  rgba(255, 255, 255, 0.4);
+          color: rgba(255, 255, 255, 0.4);
           background: rgba(255, 255, 255, 0.06);
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          .van-icon{
+
+          .van-icon {
             font-size: 0.8rem;
             font-weight: normal;
           }
-          span{
+
+          span {
             font-size: 0.28rem;
             padding-top: 0.08rem;
           }
@@ -515,21 +540,36 @@
 
 
       }
-        .well_btn{
+
+      .well_btn {
         position: fixed;
         height: 0.92rem;
         width: 100%;
         background: #35A8FB;
-        bottom:0;
+        bottom: 0;
         text-align: center;
         line-height: 0.92rem;
-        span{
-         color: #fff;
-         font-size: 0.28rem;
+
+        span {
+          color: #fff;
+          font-size: 0.28rem;
         }
       }
 
-
+       .no_data{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img{
+      width: 3.2rem;
+      height: 3.2rem;
+      }
+    span{
+      color: #B1B9DC;
+      padding: 0.12rem 0;
+      font-size: 0.28rem;
+    }
+  }
     }
 
     .van-popup {
@@ -619,10 +659,11 @@
               font-family: PingFang SC;
               color: rgba(167, 178, 214, 1);
               padding: 0.04rem 0.24rem;
-              background:rgba(255,255,255,0.1);
+              background: rgba(255, 255, 255, 0.1);
               border-radius: 2rem;
             }
-            span.active1{
+
+            span.active1 {
               background: #515789;
             }
           }
@@ -650,7 +691,8 @@
         span:nth-child(1) {
           background: #7C7C7C;
         }
-         span:nth-child(2) {
+
+        span:nth-child(2) {
           background: #35A8FB;
         }
       }

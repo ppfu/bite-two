@@ -100,6 +100,9 @@
       //获取商品详情
       getShopGoodsInfo() {
         let that = this;
+         that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Aoshop/getShopGoodsInfo",
@@ -111,6 +114,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+               that.$vux.loading.hide();
               that.goodsInfo = res.data.data;
               that.spec_cont1 = res.data.data.goods_spec[0].spec_cont;
               that.spec_cont2 = res.data.data.goods_spec[1].spec_cont;

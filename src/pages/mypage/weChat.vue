@@ -4,12 +4,12 @@
     <div class="content">
       <div class="login_info waiting">
         <van-field label="姓名" v-model="wx_name" clearable placeholder="请输入姓名" />
-        <van-field label="账号" v-model="wx_account" maxlength="11" clearable placeholder="请输入账号" />
+        <van-field label="账号" v-model="wx_account" clearable placeholder="请输入账号" />
         <div class="add_code">
           <h4>添加收款二维码</h4>
           <div class="code_img">
-            <img v-show="imgShowchat" @click="showUp" :src="wx_qrcode"  class="wx_img" />
-            <van-uploader v-show="imgShowchat == false" v-model="fileList" :after-read="afterRead" multiple :max-count="1" />
+            <!-- <img v-show="imgShowchat" @click="showUp" :src="wx_qrcode"  class="wx_img" /> -->
+            <van-uploader v-model="fileList" :after-read="afterRead" multiple :max-count="1" />
           </div>
         </div>
       </div>
@@ -29,11 +29,14 @@
   export default {
     data() {
       return {
-        wx_name:this.$store.state.pay_type.wx_name,//微信姓名
-        wx_account:this.$store.state.pay_type.wx_account,//支微信账号
-        wx_qrcode:this.$store.state.pay_type.wx_qrcode,//微信收款二维码
-        fileList: [], //展示已上传图片
-        imgShowchat: true, //第一次进入
+        wx_name: this.$store.state.pay_type.wx_name, //微信姓名
+        wx_account: this.$store.state.pay_type.wx_account, //支微信账号
+        wx_qrcode: this.$store.state.pay_type.wx_qrcode, //微信收款二维码
+        fileList: [{
+          url: this.$store.state.pay_type.wx_qrcode
+        }], //展示已上传身份证
+        // imgShow: true, //第一次进入
+        base_url: "http://www.btxk.vip", //url域名
       }
     },
     components: {
@@ -41,8 +44,11 @@
     },
     mounted() {
       let that = this;
-      if(that.wx_qrcode == null){
-        that.imgShowchat=false;
+      if (that.wx_qrcode !== null) {
+        that.wx_qrcode = that.wx_qrcode.replace(that.base_url, "")
+      }
+      if (that.wx_qrcode == null) {
+        that.fileList = [{ url: 'https://img.yzcdn.cn/vant/leaf.jpg' }];
       }
     },
     methods: {
@@ -54,44 +60,46 @@
         that.men_dlg = false;
       },
       //编辑微信
-           addWeChat() {
-             let that = this;
-             let wx_name = that.wx_name;
-             let wx_account = that.wx_account;
-             let fileList = that.fileList;
-             if (!wx_name || wx_name == null) {
-               that.$toast("请输入姓名");
-             } else if (!wx_account || wx_account == null) {
-               that.$toast("请输入微信账号");
-             } else if (fileList.length<1) {
-               that.$toast("请上传微信收款二维码");
-             } else {
-              that.$toast.loading({
-                mask: true,
-                message: "提交中..."
-              });
-               that.$http({
-                  url: "User/editUserPayType",
-                  method: "post",
-                 data: {
-                   token: window.localStorage.getItem("token"),
-                   wx_name: wx_name,
-                   wx_account: wx_account,
-                   wx_qrcode: that.wx_qrcode,
-                 }
-                 }).then(function(res) {
-                   that.$toast.clear();
-                   if (res.data.code == 1) {
-                    that.$toast.success("成功");
-                     that.back();
-                   } else {
-                     that.$toast.fail(res.data.msg);
-                   }
-                 })
-                 .catch(function(err) {
-                 });
-             }
-           },
+      addWeChat() {
+        let that = this;
+        let wx_name = that.wx_name;
+        let wx_account = that.wx_account;
+        let wx_qrcode = that.wx_qrcode;
+        let fileList = that.fileList;
+        if (!wx_name || wx_name == null) {
+          that.$toast("请输入姓名");
+        } else if (!wx_account || wx_account == null) {
+          that.$toast("请输入微信账号");
+        } else if (!wx_qrcode || wx_qrcode == null) {
+          that.$toast("请上传微信收款二维码");
+        } else if (fileList.length == 0) {
+          that.$toast("请上传微信收款二维码");
+        } else {
+          that.$toast.loading({
+            mask: true,
+            message: "提交中..."
+          });
+          that.$http({
+              url: "User/editUserPayType",
+              method: "post",
+              data: {
+                token: window.localStorage.getItem("token"),
+                wx_name: wx_name,
+                wx_account: wx_account,
+                wx_qrcode: that.wx_qrcode,
+              }
+            }).then(function(res) {
+              that.$toast.clear();
+              if (res.data.code == 1) {
+                that.$toast.success("成功");
+                that.back();
+              } else {
+                that.$toast.fail(res.data.msg);
+              }
+            })
+            .catch(function(err) {});
+        }
+      },
       // 上传微信收款码
       afterRead(file) {
         let that = this;
@@ -102,7 +110,7 @@
           formData.append("file", file.file);
           formData.append("type", "account");
           $.ajax({
-            url: "http://btxk.qilinpz.com/api/Common/upload",
+            url: "http://www.btxk.vip/api/Common/upload",
             type: "POST",
             data: formData,
             dataType: "JSON",
@@ -123,10 +131,10 @@
         };
       },
       // 显示上传图片
-     showUp() {
-       this.imgShowchat = false;
-       this.wx_qrcode = null;
-     },
+      showUp() {
+        this.imgShowchat = false;
+        this.wx_qrcode = null;
+      },
     }
   }
 </script>
@@ -177,34 +185,41 @@
           /* placeholder字体大小  */
         }
       }
+
       .add_code {
         padding: 0 4%;
+
         h4 {
           padding: 0.24rem 0;
           font-size: 0.28rem;
           font-family: PingFang SC;
           color: rgba(255, 255, 255, 1);
         }
-        .code_img{
+
+        .code_img {
           width: 100%;
           text-align: center;
           padding: 0.4rem 0;
-          .wx_img{
+
+          .wx_img {
             display: inline-block;
             width: 3rem;
             height: 3rem;
           }
-        /deep/  .van-uploader__upload{
+
+          /deep/ .van-uploader__upload {
             width: 3rem !important;
             height: 3rem !important;
             background: none !important;
-            border: 1px solid rgba(55,60,105,1) !important;
+            border: 1px solid rgba(55, 60, 105, 1) !important;
           }
-         /deep/ .van-uploader__preview-image{
-             width: 3rem !important;
-             height: 3rem !important;
+
+          /deep/ .van-uploader__preview-image {
+            width: 3rem !important;
+            height: 3rem !important;
           }
-         /deep/ .van-uploader__upload-icon{
+
+          /deep/ .van-uploader__upload-icon {
             font-size: 0.8rem !important;
             font-weight: bold !important;
             color: #B2BCD9 !important;

@@ -421,6 +421,9 @@
         // typeorder == 0 : 全部; typeorder == 1 : 电器;typeorder == 2 : 数码; typeorder == 3 : 服饰;typeorder == 4 : 其他;
         let order_type = typeorder == "0" ? "-1" : typeorder == "1" ? "0" : typeorder == "2" ? "1" : typeorder == "3" ?
           "2" : "3";
+        that.$vux.loading.show({
+          text: ""
+        });
         that
           .$http({
             url: "Aoshop/getMyGoodsOrderList",
@@ -434,6 +437,7 @@
           })
           .then(function(res) {
             if (res.data.code == 1) {
+              that.$vux.loading.hide();
               if (i == 0) {
                 if (res.data.data.data.length > 0) {
                   that.orderList = res.data.data.data;
